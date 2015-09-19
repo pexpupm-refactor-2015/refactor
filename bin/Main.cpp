@@ -6,24 +6,24 @@
  */
 
 #include "iostream"
-#include "EntidadNombrada.h"
+#include "NamedEntity.h"
 #include "cstdio"
-#include "Noticia.h"
-#include "Analizador.h"
+#include "New.h"
+#include "Analyzer.h"
 #include <iterator>
 
 int main() {
 
-	Analizador a1("data");
+	Analyzer a1("data");
 
-	std::cout << "Tí­tulo noticias\n\n";
+	std::cout << "Tï¿½tulo noticias\n\n";
 	std::cout << a1.toString();
 	std::cout << "\n\n";
-	std::cout << "Agrupación 1\n\n";
-	std::cout << a1.agruparNoticias();
+	std::cout << "Agrupaciï¿½n 1\n\n";
+	std::cout << a1.groupNews();
 	std::cout << "\n\n";
-	std::cout << "Agrupación 2\n\n";
-	std::cout << a1.agruparNoticiasGeneral();
+	std::cout << "Agrupaciï¿½n 2\n\n";
+	std::cout << a1.groupGeneralNews();
 
 	return 0;
 }

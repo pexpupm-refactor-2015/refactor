@@ -1,47 +1,45 @@
 /*
  * NamedEntity.cpp
  *
- *  Created on: 26-dic-2012
- *      Author: Alvaro
  */
 #include <sstream>
 
 #include "NamedEntity.h"
 
 NamedEntity::NamedEntity() :
-		frecuencia(0), entidadNombrada("") {
+		m_frequency(0), m_named_entity("") {
 }
 
 NamedEntity::NamedEntity(std::string n, int f) :
-		frecuencia(f), entidadNombrada(n) {
+		m_frequency(f), m_named_entity(n) {
 }
 
-int NamedEntity::getFrecuencia() const {
-	return this->frecuencia;
+int NamedEntity::getFrequency() const {
+	return this->m_frequency;
 }
 
 std::string NamedEntity::getNamedEntity() const {
-	return this->entidadNombrada;
+	return this->m_named_entity;
 }
 
-void NamedEntity::setFrecuencia(int const f) {
-	this->frecuencia = f;
+void NamedEntity::setFrequency(int const f) {
+	this->m_frequency = f;
 }
 
 void NamedEntity::setNamedEntity(std::string const en) {
-	this->entidadNombrada = en;
+	this->m_named_entity = en;
 }
 
-bool NamedEntity::esIgual(const NamedEntity& en) const {
-	bool salida = false;
-	if ((this->entidadNombrada.compare(en.entidadNombrada) == 0)) {
-		salida = true;
+bool NamedEntity::equals(const NamedEntity& en) const {
+	bool output = false;
+	if ((this->m_named_entity.compare(en.m_named_entity) == 0)) {
+		output = true;
 	}
-	return salida;
+	return output;
 }
 
 std::string NamedEntity::toString() const {
 	std::stringstream s;
-	s << this->entidadNombrada << " [" << this->frecuencia << "]";
+	s << this->m_named_entity << " [" << this->m_frequency << "]";
 	return s.str();
 }

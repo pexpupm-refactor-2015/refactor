@@ -2,199 +2,197 @@
  * New.cpp
  *
  */
-#include "New.h"
-#include "list"
-#include "NamedEntity.h"
+#include <assert.h>
+#include <list>
 #include <iostream>
 #include <fstream>
-#include <assert.h>
+#include "New.h"
+#include "NamedEntity.h"
 
 New::New() {
-	this->titulo = "";
-	this->cuerpo = "";
+	this->m_title = "";
+	this->m_body = "";
 	std::list<NamedEntity> l;
-	this->entidades = l;
+	this->m_entities = l;
 	std::list<std::string> p;
-	this->entidadesR = p;
+	this->m_entities_r = p;
 	NamedEntity e;
-	this->masFrecuente = e;
+	this->m_more_frequent = e;
 }
 
-New::New(std::string titulo, std::string cuerpo, std::string ruta) {
-	this->titulo = titulo;
-	this->cuerpo = cuerpo;
-	this->setPalabrasReservadas(ruta);
-	this->setEntidades();
-	this->setMasFrecuente();
+New::New(std::string title, std::string body, std::string path) {
+	this->m_title = title;
+	this->m_body = body;
+	this->setReservedWords(path);
+	this->setEntities();
+	this->setMoreFrequent();
 }
 
-void New::setTitulo(std::string titulo) {
-	this->titulo = titulo;
+void New::setTitle(std::string title) {
+	this->m_title = title;
 }
 
-void New::setCuerpo(std::string cuerpo) {
-	this->cuerpo = cuerpo;
+void New::setBody(std::string body) {
+	this->m_body = body;
 }
 
-void New::setPalabrasReservadas(std::string ruta) {
+void New::setReservedWords(std::string path) {
 	std::ifstream f;
-	f.open(ruta.c_str(), std::ofstream::in);
+	f.open(path.c_str(), std::ofstream::in);
 	assert(f.good());
 	std::string aux;
 	while (!f.eof()) {
 		f >> aux;
-		this->entidadesR.push_back(aux);
+		this->m_entities_r.push_back(aux);
 	}
 }
 
-void New::actualizar() {
-	this->setEntidades();
-	this->setMasFrecuente();
+void New::update() {
+	this->setEntities();
+	this->setMoreFrequent();
 }
 
-std::string New::getTitulo() const {
-	return this->titulo;
+std::string New::getTitle() const {
+	return this->m_title;
 }
 
-std::string New::getCuerpo() const {
-	return this->cuerpo;
+std::string New::getBody() const {
+	return this->m_body;
 }
 
-NamedEntity New::getMasFrecuente() const {
-	return this->masFrecuente;
+NamedEntity New::getMoreFrequent() const {
+	return this->m_more_frequent;
 }
 
-std::list<NamedEntity> New::getEntidades() const {
-	return this->entidades;
+std::list<NamedEntity> New::getEntities() const {
+	return this->m_entities;
 }
 
-std::list<std::string> New::getPalabrasReservadas() const {
-	return this->entidadesR;
+std::list<std::string> New::getReservedWords() const {
+	return this->m_entities_r;
 }
 
-std::list<NamedEntity> New::getEntidadesRelevantes() const {
+std::list<NamedEntity> New::getRelevantEntities() const {
 
-	std::string aux = this->cuerpo;
-	std::list<NamedEntity> lista;
-	std::list<NamedEntity> misEntidades = this->entidades;
+	std::string aux = this->m_body;
+	std::list<NamedEntity> relevant_entities;
 
 	NamedEntity en;
 	aux = aux.substr(0, (aux.size() / 3));
-	for (std::list<NamedEntity>::iterator it = misEntidades.begin();
-			it != misEntidades.end(); it++) {
+  std::list<NamedEntity>::const_iterator it;
+	for (it = m_entities.begin(); it != m_entities.end(); it++) {
 		en = *it;
 		if (aux.find(en.getNamedEntity()) != std::string::npos) {
-			lista.push_back(en);
+			relevant_entities.push_back(en);
 		}
 	}
 
-	return lista;
+	return relevant_entities;
 }
 
-bool New::esAgrupable(New n) const {
+bool New::canBeGrouped(New n) const {
 
-	bool salida = false;
+	bool output = false;
 
-	if (this->titulo.find(n.getMasFrecuente().getNamedEntity())
+	if (this->m_title.find(n.getMoreFrequent().getNamedEntity())
 			!= std::string::npos) {
-		salida = true;
+		output = true;
 	}
 
-	std::list<NamedEntity> primero = this->getEntidadesRelevantes();
-	std::list<NamedEntity> segundo = n.getEntidadesRelevantes();
+	std::list<NamedEntity> first = this->getRelevantEntities();
+	std::list<NamedEntity> second = n.getRelevantEntities();
 	std::list<NamedEntity> final;
 	NamedEntity en1;
 	NamedEntity en2;
 
-	for (std::list<NamedEntity>::iterator it1 = primero.begin();
-			it1 != primero.end(); it1++) {
+	for (std::list<NamedEntity>::iterator it1 = first.begin();
+			it1 != first.end(); it1++) {
 
 		en1 = *it1;
-		for (std::list<NamedEntity>::iterator it2 = segundo.begin();
-				it2 != segundo.end(); it2++) {
+		for (std::list<NamedEntity>::iterator it2 = second.begin();
+				it2 != second.end(); it2++) {
 
 			en2 = *it2;
-			if (en1.esIgual(en2)) {
+			if (en1.equals(en2)) {
 				final.push_back(en2);
 			}
 		}
 	}
 
-	if (final.size() >= (segundo.size() / 3)) {
-		salida = true;
+	if (final.size() >= (second.size() / 3)) {
+		output = true;
 	}
-	return salida;
+	return output;
 }
 
 std::string New::toString() const {
 
-	std::string salida;
-	salida = "TITULO: " + this->titulo + "\n" + "CUERPO: " + this->cuerpo + "\n"
-			+ "ENTIDADES: ";
+	std::string output;
+	output = "TITLE: " + this->m_title + "\n" + "BODY: " + this->m_body + "\n"
+			+ "ENTITIES: ";
 
-	std::list<NamedEntity> lista = this->getEntidades();
+	std::list<NamedEntity> entities_list = this->getEntities();
 
-	for (std::list<NamedEntity>::iterator i = lista.begin();
-			i != lista.end(); i++) {
-		salida += i->toString();
-		salida += " ";
+	for (std::list<NamedEntity>::iterator i = entities_list.begin();
+			i != entities_list.end(); i++) {
+		output += i->toString();
+		output += " ";
 	}
 
-	salida = salida + "\n" + "MAS FRECUENTE: "
-			+ this->getMasFrecuente().toString();
+	output = output + "\n" + "MAS FRECUENTE: "
+			+ getMoreFrequent().toString();
 
-	return salida;
+	return output;
 }
 
-void New::setEntidades() {
+void New::setEntities() {
 	std::string aux = "";
-	std::list<NamedEntity> lista;
 
-	for (unsigned int i = 0; i <= this->cuerpo.size(); i++) {
-		if (this->cuerpo[i] != ' ') {
-			if (this->esletra(this->cuerpo[i])) {
-				aux += this->cuerpo[i];
+	for (unsigned int i = 0; i <= this->m_body.size(); i++) {
+		if (this->m_body[i] != ' ') {
+			if (this->isLetter(this->m_body[i])) {
+				aux += this->m_body[i];
 			}
 		} else {
-			this->agregarEntidad(aux);
+			this->addEntity(aux);
 			aux = "";
 		}
 	}
 }
 
-void New::setMasFrecuente() {
+void New::setMoreFrequent() {
 	NamedEntity aux;
 	NamedEntity aux2;
-	for (std::list<NamedEntity>::iterator i = this->entidades.begin();
-			i != this->entidades.end(); ++i) { // Iterate through 'items'
+	for (std::list<NamedEntity>::iterator i = this->m_entities.begin();
+			i != this->m_entities.end(); ++i) { // Iterate through 'items'
 		aux2 = *i;
-		if (aux.getFrecuencia() < aux2.getFrecuencia()) {
+		if (aux.getFrequency() < aux2.getFrequency()) {
 			aux.setNamedEntity(aux2.getNamedEntity());
-			aux.setFrecuencia(aux2.getFrecuencia());
+			aux.setFrequency(aux2.getFrequency());
 		}
 	}
-	this->masFrecuente = aux;
+	this->m_more_frequent = aux;
 }
 
-void New::agregarEntidad(std::string nombre) {
-	bool empezar = true;
-	for (std::list<std::string>::iterator i = this->entidadesR.begin();
-			i != this->entidadesR.end(); i++) {
+void New::addEntity(std::string nombre) {
+	bool must_start = true;
+	for (std::list<std::string>::iterator i = this->m_entities_r.begin();
+			i != this->m_entities_r.end(); i++) {
 		std::string aux = nombre;
 		int ascii = static_cast<int>(aux[0]);
 		if ((ascii >= 65) && (ascii <= 90)) {
 			aux[0] = static_cast<char>(aux[0] + 32);
 		}
 		if (i->compare(aux) == 0) {
-			empezar = false;
+			must_start = false;
 		}
 	}
-	if (empezar) {
+	if (must_start) {
 		bool add = true;
-		for (std::list<NamedEntity>::iterator it = this->entidades.begin();
-				it != this->entidades.end(); it++) {
+		for (std::list<NamedEntity>::iterator it = this->m_entities.begin();
+				it != this->m_entities.end(); it++) {
 			if (it->getNamedEntity().compare(nombre) == 0) {
-				it->setFrecuencia(it->getFrecuencia() + 1);
+				it->setFrequency(it->getFrequency() + 1);
 				add = false;
 			}
 		}
@@ -202,27 +200,26 @@ void New::agregarEntidad(std::string nombre) {
 			int aux = static_cast<int>(nombre[0]);
 			if ((aux >= 65) && (aux <= 90)) {
 				NamedEntity aux(nombre, 1);
-				this->entidades.push_back(aux);
+				this->m_entities.push_back(aux);
 			}
 		}
 	}
 }
 
-bool New::esletra(char c) const {
-	bool salida = false;
+bool New::isLetter(char c) const {
+	bool output = false;
 	int ascii = static_cast<int>(c);
 	if ((ascii >= 65) && (ascii <= 90)) {
-		salida = true;
+		output = true;
 	}
 	if ((ascii >= 97) && (ascii <= 122)) {
-		salida = true;
+		output = true;
 	}
 	if (ascii < 0) {
-		salida = true;
+		output = true;
 	}
 	if ((ascii >= 48) && (ascii <= 57)) {
-		salida = true;
+		output = true;
 	}
-	return salida;
+	return output;
 }
-

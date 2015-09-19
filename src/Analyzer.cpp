@@ -40,29 +40,27 @@ const std::string Analyzer::getFinalPath(const std::string& news_path,
 void Analyzer::parseNews(std::ifstream& f,
 						   const std::string& restricted_words_path)
 {
-	std::string colector = "";
-	std::string titulo = "";
-	std::string cuerpo = "";
+	std::string collector = "";
+	std::string title = "";
+	std::string body = "";
 	if (f.is_open()) {
 		while (!f.eof()) {
-			getline(f, colector, '\n');
-			if (titulo == "") {
-				titulo = titulo + " " + colector;
+			getline(f, collector, '\n');
+			if (title == "") {
+				title = title + " " + collector;
 			} else {
-				cuerpo = cuerpo + " " + colector;
+				body = body + " " + collector;
 			}
 		}
-		New n(titulo, cuerpo, restricted_words_path);
-		titulo = "";
-		cuerpo = "";
-		m_news_list.push_front(n);
+		New added_new(title, body, restricted_words_path);
+		m_news_list.push_front(added_new);
 	}
 }
 
 void Analyzer::setNews(const std::string& ruta) {
 
-	std::string rutaRestricciones = ruta + RESTRICTED_WORDS;
-	std::string rutaNews = ruta + NEWS_PATH;
+	std::string restriction_path = ruta + RESTRICTED_WORDS;
+	std::string news_path = ruta + NEWS_PATH;
 
 	int x = 1;
 	int y = 1;
@@ -71,10 +69,10 @@ void Analyzer::setNews(const std::string& ruta) {
 	std::ifstream f;
 
 	do {
-		std::string rutaFinal = getFinalPath(rutaNews, x, y);
+		std::string final_path = getFinalPath(news_path, x, y);
 		std::ifstream f;
-		f.open(rutaFinal.c_str(), std::ofstream::in);
-		parseNews(f, rutaRestricciones);
+		f.open(final_path.c_str(), std::ofstream::in);
+		parseNews(f, restriction_path);
 		y++;
 		if (y >= 999) {
 			if (!more_files) {
@@ -105,11 +103,11 @@ std::string Analyzer::groupNews() {
 	for (it = m_news_list.begin(); it != m_news_list.end(); it++) {
 
 		New n = *it;
-		if (entity.compare(n.getMasFrecuente().getNamedEntity()) == 0) {
-			output = output + "*[" + n.getTitulo() + "]\n";
+		if (entity.compare(n.getMoreFrequent().getNamedEntity()) == 0) {
+			output = output + "*[" + n.getTitle() + "]\n";
 		} else {
-			entity = n.getMasFrecuente().getNamedEntity();
-			output = output + "\n" + entity + "\n" + "*[" + n.getTitulo()
+			entity = n.getMoreFrequent().getNamedEntity();
+			output = output + "\n" + entity + "\n" + "*[" + n.getTitle()
 					+ "]\n";
 		}
 	}
@@ -119,15 +117,15 @@ std::string Analyzer::groupNews() {
 
 std::string Analyzer::groupGeneralNews() {
 
-	std::list<NamedEntity> agrupacion[m_news_list.size()];
+	std::list<NamedEntity> group[m_news_list.size()];
 
 	this->sortNews();
 
 	std::list<New> ln1 = this->m_news_list;
 	std::list<New> ln2 = this->m_news_list;
 
-	std::string salida = "";
-	std::string agrupaciones = "";
+	std::string output = "";
+	std::string groups = "";
 	New n2;
 	NamedEntity en;
 	NamedEntity en2;
@@ -144,28 +142,28 @@ std::string Analyzer::groupGeneralNews() {
 			New& n2 = *it2;
 
 			if ((distance(it1, it2) != 0)) {
-				if ((n.esAgrupable(n2)) || (n2.esAgrupable(n))) {
-					agrupacion[c].push_back(n.getMasFrecuente());
-					agrupacion[c].push_back(n2.getMasFrecuente());
+				if ((n.canBeGrouped(n2)) || (n2.canBeGrouped(n))) {
+					group[c].push_back(n.getMoreFrequent());
+					group[c].push_back(n2.getMoreFrequent());
 					it2 = ln1.erase(it2);
 					sola = false;
 				}
 			}
 		}
 
-		for (std::list<NamedEntity>::iterator it3 = agrupacion[c].begin();
-				it3 != agrupacion[c].end(); it3++) {
+		for (std::list<NamedEntity>::iterator it3 = group[c].begin();
+				it3 != group[c].end(); it3++) {
 			en2 = *it3;
 			for (std::list<NamedEntity>::iterator it4 =
-					agrupacion[c].begin(); it4 != agrupacion[c].end(); it4++) {
+					group[c].begin(); it4 != group[c].end(); it4++) {
 				en3 = *it4;
-				if ((en2.esIgual(en3)) && (distance(it3, it4) != 0)) {
-					it4 = agrupacion[c].erase(it4);
+				if ((en2.equals(en3)) && (distance(it3, it4) != 0)) {
+					it4 = group[c].erase(it4);
 				}
 			}
 		}
 		if (sola) {
-			agrupacion[c].push_back(n.getMasFrecuente());
+			group[c].push_back(n.getMoreFrequent());
 			it1 = ln1.erase(it1);
 		}
 
@@ -173,8 +171,8 @@ std::string Analyzer::groupGeneralNews() {
 	}
 
 	for (unsigned int c = 0; c < ln1.size(); c++) {
-		for (std::list<NamedEntity>::iterator it4 = agrupacion[c].begin();
-				it4 != agrupacion[c].end(); it4++) {
+		for (std::list<NamedEntity>::iterator it4 = group[c].begin();
+				it4 != group[c].end(); it4++) {
 
 			NamedEntity& en3 = *it4;
 
@@ -182,25 +180,26 @@ std::string Analyzer::groupGeneralNews() {
 					it5 != ln2.end(); it5++) {
 				New& n = *it5;
 
-				if (n.getMasFrecuente().esIgual(en3)) {
-					if (agrupaciones == "") {
-						agrupaciones = agrupaciones + "[" + n.getTitulo()
+				if (n.getMoreFrequent().equals(en3)) {
+					if (groups == "") {
+						groups = groups + "[" + n.getTitle()
 								+ "]\n";
 					} else {
-						agrupaciones = agrupaciones + "   *[" + n.getTitulo()
+						groups = groups + "   *[" + n.getTitle()
 								+ "]\n";
 					}
 				}
 			}
 		}
-		salida = salida + agrupaciones + "\n";
-		agrupaciones = "";
+		output = output + groups + "\n";
+  groups = "";
 	}
 
-	return salida;
+	return output;
 }
 
-std::string Analyzer::zeroPadding(int n, int size) const {
+std::string Analyzer::zeroPadding(int n, int size) const
+{
 	std::stringstream ss;
 	ss << n;
 	std::string aux = ss.str();
@@ -210,8 +209,8 @@ std::string Analyzer::zeroPadding(int n, int size) const {
 	return aux;
 }
 
-void Analyzer::sortNews() {
-
+void Analyzer::sortNews()
+{
 	New aux[this->m_news_list.size()];
 	int c = 0;
 	for (std::list<New>::iterator it = m_news_list.begin();
@@ -225,8 +224,8 @@ void Analyzer::sortNews() {
 	New temp;
 	for (int i = 1; i < tam; i++) {
 		for (int j = 0; j < tam - 1; j++) {
-			if (aux[j].getMasFrecuente().getNamedEntity()
-					> aux[j + 1].getMasFrecuente().getNamedEntity()) {
+			if (aux[j].getMoreFrequent().getNamedEntity()
+					> aux[j + 1].getMoreFrequent().getNamedEntity()) {
 				temp = aux[j];
 				aux[j] = aux[j + 1];
 				aux[j + 1] = temp;
@@ -242,29 +241,29 @@ void Analyzer::sortNews() {
 
 bool Analyzer::exists(std::list<NamedEntity> es,
 		NamedEntity e) const {
-	bool salida = false;
+	bool output = false;
 	NamedEntity aux;
 	for (std::list<NamedEntity>::iterator it = es.begin(); it != es.end();
 			it++) {
 		aux = *it;
 		if (aux.getNamedEntity().compare(e.getNamedEntity()) == 0) {
-			salida = true;
+			output = true;
 		}
 	}
-	return salida;
+	return output;
 }
 
 std::string Analyzer::toString() const {
-	std::string salida = "";
+	std::string output = "";
 	New aux;
  std::list<New>::const_iterator it;
 	for (it = m_news_list.begin(); it != m_news_list.end(); it++) {
 		aux = *it;
-		if (salida == "") {
-			salida = salida + "Ruta del directorio: " + this->m_path + "\n\n";
+		if (output == "") {
+			output = output + "Ruta del directorio: " + this->m_path + "\n\n";
 		}
-		salida = salida + "Titulo: " + aux.getTitulo() + "\n\n";
+		output = output + "Titulo: " + aux.getTitle() + "\n\n";
 	}
-	return salida;
+	return output;
 }
 

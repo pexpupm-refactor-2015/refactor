@@ -8,20 +8,19 @@
 
 class NamedEntity {
 
-	int frecuencia;
-	std::string entidadNombrada;
-
 public:
-
 	NamedEntity();
-	NamedEntity( std::string n, int f);
-	int getFrecuencia() const;
+	NamedEntity(std::string n, int f);
+	int getFrequency() const;
 	std::string getNamedEntity() const;
-	void setFrecuencia(int const f);
+	void setFrequency(int const f);
 	void setNamedEntity(std::string const en);
-	bool esIgual(const NamedEntity& en) const;
+	bool equals(const NamedEntity& en) const;
 	std::string toString() const;
 
+private:
+	int m_frequency;
+	std::string m_named_entity;
 };
 
 #endif /* NAMED_ENTITY_H_ */
