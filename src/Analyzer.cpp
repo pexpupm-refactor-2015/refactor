@@ -105,10 +105,10 @@ std::string Analyzer::groupNews() {
 	for (it = m_news_list.begin(); it != m_news_list.end(); it++) {
 
 		New n = *it;
-		if (entity.compare(n.getMasFrecuente().getEntidadNombrada()) == 0) {
+		if (entity.compare(n.getMasFrecuente().getNamedEntity()) == 0) {
 			output = output + "*[" + n.getTitulo() + "]\n";
 		} else {
-			entity = n.getMasFrecuente().getEntidadNombrada();
+			entity = n.getMasFrecuente().getNamedEntity();
 			output = output + "\n" + entity + "\n" + "*[" + n.getTitulo()
 					+ "]\n";
 		}
@@ -119,7 +119,7 @@ std::string Analyzer::groupNews() {
 
 std::string Analyzer::groupGeneralNews() {
 
-	std::list<EntidadNombrada> agrupacion[m_news_list.size()];
+	std::list<NamedEntity> agrupacion[m_news_list.size()];
 
 	this->sortNews();
 
@@ -129,9 +129,9 @@ std::string Analyzer::groupGeneralNews() {
 	std::string salida = "";
 	std::string agrupaciones = "";
 	New n2;
-	EntidadNombrada en;
-	EntidadNombrada en2;
-	EntidadNombrada en3;
+	NamedEntity en;
+	NamedEntity en2;
+	NamedEntity en3;
 
 	unsigned int c = 0;
 	for (std::list<New>::iterator it1 = ln1.begin(); it1 != ln1.end();
@@ -153,10 +153,10 @@ std::string Analyzer::groupGeneralNews() {
 			}
 		}
 
-		for (std::list<EntidadNombrada>::iterator it3 = agrupacion[c].begin();
+		for (std::list<NamedEntity>::iterator it3 = agrupacion[c].begin();
 				it3 != agrupacion[c].end(); it3++) {
 			en2 = *it3;
-			for (std::list<EntidadNombrada>::iterator it4 =
+			for (std::list<NamedEntity>::iterator it4 =
 					agrupacion[c].begin(); it4 != agrupacion[c].end(); it4++) {
 				en3 = *it4;
 				if ((en2.esIgual(en3)) && (distance(it3, it4) != 0)) {
@@ -173,10 +173,10 @@ std::string Analyzer::groupGeneralNews() {
 	}
 
 	for (unsigned int c = 0; c < ln1.size(); c++) {
-		for (std::list<EntidadNombrada>::iterator it4 = agrupacion[c].begin();
+		for (std::list<NamedEntity>::iterator it4 = agrupacion[c].begin();
 				it4 != agrupacion[c].end(); it4++) {
 
-			EntidadNombrada& en3 = *it4;
+			NamedEntity& en3 = *it4;
 
 			for (std::list<New>::iterator it5 = ln2.begin();
 					it5 != ln2.end(); it5++) {
@@ -225,8 +225,8 @@ void Analyzer::sortNews() {
 	New temp;
 	for (int i = 1; i < tam; i++) {
 		for (int j = 0; j < tam - 1; j++) {
-			if (aux[j].getMasFrecuente().getEntidadNombrada()
-					> aux[j + 1].getMasFrecuente().getEntidadNombrada()) {
+			if (aux[j].getMasFrecuente().getNamedEntity()
+					> aux[j + 1].getMasFrecuente().getNamedEntity()) {
 				temp = aux[j];
 				aux[j] = aux[j + 1];
 				aux[j + 1] = temp;
@@ -240,14 +240,14 @@ void Analyzer::sortNews() {
 	}
 }
 
-bool Analyzer::exists(std::list<EntidadNombrada> es,
-		EntidadNombrada e) const {
+bool Analyzer::exists(std::list<NamedEntity> es,
+		NamedEntity e) const {
 	bool salida = false;
-	EntidadNombrada aux;
-	for (std::list<EntidadNombrada>::iterator it = es.begin(); it != es.end();
+	NamedEntity aux;
+	for (std::list<NamedEntity>::iterator it = es.begin(); it != es.end();
 			it++) {
 		aux = *it;
-		if (aux.getEntidadNombrada().compare(e.getEntidadNombrada()) == 0) {
+		if (aux.getNamedEntity().compare(e.getNamedEntity()) == 0) {
 			salida = true;
 		}
 	}

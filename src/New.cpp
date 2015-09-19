@@ -4,7 +4,7 @@
  */
 #include "New.h"
 #include "list"
-#include "EntidadNombrada.h"
+#include "NamedEntity.h"
 #include <iostream>
 #include <fstream>
 #include <assert.h>
@@ -12,11 +12,11 @@
 New::New() {
 	this->titulo = "";
 	this->cuerpo = "";
-	std::list<EntidadNombrada> l;
+	std::list<NamedEntity> l;
 	this->entidades = l;
 	std::list<std::string> p;
 	this->entidadesR = p;
-	EntidadNombrada e;
+	NamedEntity e;
 	this->masFrecuente = e;
 }
 
@@ -60,11 +60,11 @@ std::string New::getCuerpo() const {
 	return this->cuerpo;
 }
 
-EntidadNombrada New::getMasFrecuente() const {
+NamedEntity New::getMasFrecuente() const {
 	return this->masFrecuente;
 }
 
-std::list<EntidadNombrada> New::getEntidades() const {
+std::list<NamedEntity> New::getEntidades() const {
 	return this->entidades;
 }
 
@@ -72,18 +72,18 @@ std::list<std::string> New::getPalabrasReservadas() const {
 	return this->entidadesR;
 }
 
-std::list<EntidadNombrada> New::getEntidadesRelevantes() const {
+std::list<NamedEntity> New::getEntidadesRelevantes() const {
 
 	std::string aux = this->cuerpo;
-	std::list<EntidadNombrada> lista;
-	std::list<EntidadNombrada> misEntidades = this->entidades;
+	std::list<NamedEntity> lista;
+	std::list<NamedEntity> misEntidades = this->entidades;
 
-	EntidadNombrada en;
+	NamedEntity en;
 	aux = aux.substr(0, (aux.size() / 3));
-	for (std::list<EntidadNombrada>::iterator it = misEntidades.begin();
+	for (std::list<NamedEntity>::iterator it = misEntidades.begin();
 			it != misEntidades.end(); it++) {
 		en = *it;
-		if (aux.find(en.getEntidadNombrada()) != std::string::npos) {
+		if (aux.find(en.getNamedEntity()) != std::string::npos) {
 			lista.push_back(en);
 		}
 	}
@@ -95,22 +95,22 @@ bool New::esAgrupable(New n) const {
 
 	bool salida = false;
 
-	if (this->titulo.find(n.getMasFrecuente().getEntidadNombrada())
+	if (this->titulo.find(n.getMasFrecuente().getNamedEntity())
 			!= std::string::npos) {
 		salida = true;
 	}
 
-	std::list<EntidadNombrada> primero = this->getEntidadesRelevantes();
-	std::list<EntidadNombrada> segundo = n.getEntidadesRelevantes();
-	std::list<EntidadNombrada> final;
-	EntidadNombrada en1;
-	EntidadNombrada en2;
+	std::list<NamedEntity> primero = this->getEntidadesRelevantes();
+	std::list<NamedEntity> segundo = n.getEntidadesRelevantes();
+	std::list<NamedEntity> final;
+	NamedEntity en1;
+	NamedEntity en2;
 
-	for (std::list<EntidadNombrada>::iterator it1 = primero.begin();
+	for (std::list<NamedEntity>::iterator it1 = primero.begin();
 			it1 != primero.end(); it1++) {
 
 		en1 = *it1;
-		for (std::list<EntidadNombrada>::iterator it2 = segundo.begin();
+		for (std::list<NamedEntity>::iterator it2 = segundo.begin();
 				it2 != segundo.end(); it2++) {
 
 			en2 = *it2;
@@ -132,9 +132,9 @@ std::string New::toString() const {
 	salida = "TITULO: " + this->titulo + "\n" + "CUERPO: " + this->cuerpo + "\n"
 			+ "ENTIDADES: ";
 
-	std::list<EntidadNombrada> lista = this->getEntidades();
+	std::list<NamedEntity> lista = this->getEntidades();
 
-	for (std::list<EntidadNombrada>::iterator i = lista.begin();
+	for (std::list<NamedEntity>::iterator i = lista.begin();
 			i != lista.end(); i++) {
 		salida += i->toString();
 		salida += " ";
@@ -148,7 +148,7 @@ std::string New::toString() const {
 
 void New::setEntidades() {
 	std::string aux = "";
-	std::list<EntidadNombrada> lista;
+	std::list<NamedEntity> lista;
 
 	for (unsigned int i = 0; i <= this->cuerpo.size(); i++) {
 		if (this->cuerpo[i] != ' ') {
@@ -163,13 +163,13 @@ void New::setEntidades() {
 }
 
 void New::setMasFrecuente() {
-	EntidadNombrada aux;
-	EntidadNombrada aux2;
-	for (std::list<EntidadNombrada>::iterator i = this->entidades.begin();
+	NamedEntity aux;
+	NamedEntity aux2;
+	for (std::list<NamedEntity>::iterator i = this->entidades.begin();
 			i != this->entidades.end(); ++i) { // Iterate through 'items'
 		aux2 = *i;
 		if (aux.getFrecuencia() < aux2.getFrecuencia()) {
-			aux.setEntidadNombrada(aux2.getEntidadNombrada());
+			aux.setNamedEntity(aux2.getNamedEntity());
 			aux.setFrecuencia(aux2.getFrecuencia());
 		}
 	}
@@ -191,9 +191,9 @@ void New::agregarEntidad(std::string nombre) {
 	}
 	if (empezar) {
 		bool add = true;
-		for (std::list<EntidadNombrada>::iterator it = this->entidades.begin();
+		for (std::list<NamedEntity>::iterator it = this->entidades.begin();
 				it != this->entidades.end(); it++) {
-			if (it->getEntidadNombrada().compare(nombre) == 0) {
+			if (it->getNamedEntity().compare(nombre) == 0) {
 				it->setFrecuencia(it->getFrecuencia() + 1);
 				add = false;
 			}
@@ -201,7 +201,7 @@ void New::agregarEntidad(std::string nombre) {
 		if (add) {
 			int aux = static_cast<int>(nombre[0]);
 			if ((aux >= 65) && (aux <= 90)) {
-				EntidadNombrada aux(nombre, 1);
+				NamedEntity aux(nombre, 1);
 				this->entidades.push_back(aux);
 			}
 		}

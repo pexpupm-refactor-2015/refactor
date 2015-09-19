@@ -21,7 +21,7 @@ private:
 	const std::string getFinalPath(const std::string& ruta_noticias,
 								   const int& xshift,
 								   const int& yshift) const;
-	bool exists(std::list<EntidadNombrada> es, EntidadNombrada e)const;
+	bool exists(std::list<NamedEntity> es, NamedEntity e)const;
 	std::list<New> m_news_list;
 	std::string m_path;
 };

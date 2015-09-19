@@ -6,15 +6,15 @@
 #define NEW_H_
 #include "string"
 #include <list>
-#include "EntidadNombrada.h"
+#include "NamedEntity.h"
 
 class New {
 
 	std::string titulo;
 	std::string cuerpo;
-	std::list<EntidadNombrada> entidades;
+	std::list<NamedEntity> entidades;
 	std::list<std::string> entidadesR;
-	EntidadNombrada masFrecuente;
+	NamedEntity masFrecuente;
 
 public:
 	New();
@@ -27,10 +27,10 @@ public:
 
 	std::string getTitulo()const;
 	std::string getCuerpo()const;
-	EntidadNombrada getMasFrecuente()const;
-	std::list<EntidadNombrada> getEntidades()const;
+	NamedEntity getMasFrecuente()const;
+	std::list<NamedEntity> getEntidades()const;
 	std::list<std::string> getPalabrasReservadas()const;
-	std::list<EntidadNombrada> getEntidadesRelevantes()const;
+	std::list<NamedEntity> getEntidadesRelevantes()const;
 	bool esAgrupable(New n)const;
 	std::string toString()const;
 
