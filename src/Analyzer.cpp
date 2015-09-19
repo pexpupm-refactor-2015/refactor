@@ -58,6 +58,35 @@ void Analyzer::parseNews(std::ifstream& f,
 	}
 }
 
+bool Analyzer::mustContinueParsing(const std::ifstream& file,
+                                   int& group_desc,
+                                   int& new_desc,
+                                   bool& more_files) const
+{
+ bool continue_parsing = true;
+	if (new_desc >= 999)
+	{
+		if (!more_files)
+		{
+			continue_parsing = false;
+		}
+		else {
+			group_desc++;
+			new_desc = 0;
+			more_files = false;
+		}
+	}
+	if (file.is_open())
+	{
+		more_files = true;
+	}
+	if (group_desc >= 99999)
+	{
+		continue_parsing = false;
+	}
+	return continue_parsing;
+}
+
 void Analyzer::setNews(const std::string& path)
 {
 	std::string restriction_path = path + RESTRICTED_WORDS;
@@ -67,35 +96,17 @@ void Analyzer::setNews(const std::string& path)
 	int new_desc = 1;
 	bool continue_parsing = true;
 	bool more_files = false;
-	std::ifstream f;
+	std::ifstream news_file;
 	do
 	{
 		std::string final_path = getFinalPath(news_path, group_desc, new_desc);
-		std::ifstream f;
-		f.open(final_path.c_str(), std::ofstream::in);
-		parseNews(f, restriction_path);
+		std::ifstream news_file;
+		news_file.open(final_path.c_str(), std::ofstream::in);
+		parseNews(news_file, restriction_path);
 		new_desc++;
-		if (new_desc >= 999)
-		{
-			if (!more_files)
-			{
-				continue_parsing = false;
-			}
-			else {
-				group_desc++;
-				new_desc = 0;
-				more_files = false;
-			}
-		}
-		if (f.is_open())
-		{
-			more_files = true;
-		}
-		if (group_desc >= 99999)
-		{
-			continue_parsing = false;
-		}
-		f.close();
+  continue_parsing = mustContinueParsing(news_file, group_desc, new_desc,
+                                         more_files);
+		news_file.close();
 	}
 	while (continue_parsing);
 }

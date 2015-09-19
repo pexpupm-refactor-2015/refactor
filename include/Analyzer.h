@@ -18,6 +18,10 @@ public:
 	std::string groupGeneralNews();
 	std::string toString()const;
 private:
+	bool mustContinueParsing(const std::ifstream& file,
+                          int& group_desc,
+                          int& new_desc,
+                          bool& more_files) const;
 	std::string zeroPadding(const int& nunber, const int& size) const;
 	bool continueParsing() const;
 	void sortNews();
