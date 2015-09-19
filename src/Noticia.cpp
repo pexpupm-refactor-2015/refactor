@@ -4,7 +4,6 @@
  *  Created on: 26-dic-2012
  *      Author: Alvaro
  */
-
 #include "Noticia.h"
 #include "list"
 #include "EntidadNombrada.h"
