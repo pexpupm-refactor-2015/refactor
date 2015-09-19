@@ -9,6 +9,7 @@
 #include "EntidadNombrada.h"
 #include <iostream>
 #include <fstream>
+#include <assert.h>
 
 Noticia::Noticia() {
 	this->titulo = "";
@@ -40,6 +41,7 @@ void Noticia::setCuerpo(std::string cuerpo) {
 void Noticia::setPalabrasReservadas(std::string ruta) {
 	std::ifstream f;
 	f.open(ruta.c_str(), std::ofstream::in);
+	assert(f.good());
 	std::string aux;
 	while (!f.eof()) {
 		f >> aux;

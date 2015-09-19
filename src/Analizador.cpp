@@ -115,8 +115,6 @@ std::string Analizador::agruparNoticias() {
 
 std::string Analizador::agruparNoticiasGeneral() {
 
-	std::cout << "*";
-
 	std::list<EntidadNombrada> agrupacion[this->noticias.size()];
 
 	this->ordenarNoticias();
@@ -170,7 +168,7 @@ std::string Analizador::agruparNoticiasGeneral() {
 		c++;
 	}
 
-	for (unsigned int c = 0; c <= ln1.size(); c++) {
+	for (unsigned int c = 0; c < ln1.size(); c++) {
 		for (std::list<EntidadNombrada>::iterator it4 = agrupacion[c].begin();
 				it4 != agrupacion[c].end(); it4++) {
 
