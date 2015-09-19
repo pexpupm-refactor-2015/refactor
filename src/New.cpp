@@ -1,17 +1,15 @@
 /*
- * Noticia.cpp
+ * New.cpp
  *
- *  Created on: 26-dic-2012
- *      Author: Alvaro
  */
-#include "Noticia.h"
+#include "New.h"
 #include "list"
 #include "EntidadNombrada.h"
 #include <iostream>
 #include <fstream>
 #include <assert.h>
 
-Noticia::Noticia() {
+New::New() {
 	this->titulo = "";
 	this->cuerpo = "";
 	std::list<EntidadNombrada> l;
@@ -22,7 +20,7 @@ Noticia::Noticia() {
 	this->masFrecuente = e;
 }
 
-Noticia::Noticia(std::string titulo, std::string cuerpo, std::string ruta) {
+New::New(std::string titulo, std::string cuerpo, std::string ruta) {
 	this->titulo = titulo;
 	this->cuerpo = cuerpo;
 	this->setPalabrasReservadas(ruta);
@@ -30,15 +28,15 @@ Noticia::Noticia(std::string titulo, std::string cuerpo, std::string ruta) {
 	this->setMasFrecuente();
 }
 
-void Noticia::setTitulo(std::string titulo) {
+void New::setTitulo(std::string titulo) {
 	this->titulo = titulo;
 }
 
-void Noticia::setCuerpo(std::string cuerpo) {
+void New::setCuerpo(std::string cuerpo) {
 	this->cuerpo = cuerpo;
 }
 
-void Noticia::setPalabrasReservadas(std::string ruta) {
+void New::setPalabrasReservadas(std::string ruta) {
 	std::ifstream f;
 	f.open(ruta.c_str(), std::ofstream::in);
 	assert(f.good());
@@ -49,32 +47,32 @@ void Noticia::setPalabrasReservadas(std::string ruta) {
 	}
 }
 
-void Noticia::actualizar() {
+void New::actualizar() {
 	this->setEntidades();
 	this->setMasFrecuente();
 }
 
-std::string Noticia::getTitulo() const {
+std::string New::getTitulo() const {
 	return this->titulo;
 }
 
-std::string Noticia::getCuerpo() const {
+std::string New::getCuerpo() const {
 	return this->cuerpo;
 }
 
-EntidadNombrada Noticia::getMasFrecuente() const {
+EntidadNombrada New::getMasFrecuente() const {
 	return this->masFrecuente;
 }
 
-std::list<EntidadNombrada> Noticia::getEntidades() const {
+std::list<EntidadNombrada> New::getEntidades() const {
 	return this->entidades;
 }
 
-std::list<std::string> Noticia::getPalabrasReservadas() const {
+std::list<std::string> New::getPalabrasReservadas() const {
 	return this->entidadesR;
 }
 
-std::list<EntidadNombrada> Noticia::getEntidadesRelevantes() const {
+std::list<EntidadNombrada> New::getEntidadesRelevantes() const {
 
 	std::string aux = this->cuerpo;
 	std::list<EntidadNombrada> lista;
@@ -93,7 +91,7 @@ std::list<EntidadNombrada> Noticia::getEntidadesRelevantes() const {
 	return lista;
 }
 
-bool Noticia::esAgrupable(Noticia n) const {
+bool New::esAgrupable(New n) const {
 
 	bool salida = false;
 
@@ -128,7 +126,7 @@ bool Noticia::esAgrupable(Noticia n) const {
 	return salida;
 }
 
-std::string Noticia::toString() const {
+std::string New::toString() const {
 
 	std::string salida;
 	salida = "TITULO: " + this->titulo + "\n" + "CUERPO: " + this->cuerpo + "\n"
@@ -148,7 +146,7 @@ std::string Noticia::toString() const {
 	return salida;
 }
 
-void Noticia::setEntidades() {
+void New::setEntidades() {
 	std::string aux = "";
 	std::list<EntidadNombrada> lista;
 
@@ -164,7 +162,7 @@ void Noticia::setEntidades() {
 	}
 }
 
-void Noticia::setMasFrecuente() {
+void New::setMasFrecuente() {
 	EntidadNombrada aux;
 	EntidadNombrada aux2;
 	for (std::list<EntidadNombrada>::iterator i = this->entidades.begin();
@@ -178,7 +176,7 @@ void Noticia::setMasFrecuente() {
 	this->masFrecuente = aux;
 }
 
-void Noticia::agregarEntidad(std::string nombre) {
+void New::agregarEntidad(std::string nombre) {
 	bool empezar = true;
 	for (std::list<std::string>::iterator i = this->entidadesR.begin();
 			i != this->entidadesR.end(); i++) {
@@ -210,7 +208,7 @@ void Noticia::agregarEntidad(std::string nombre) {
 	}
 }
 
-bool Noticia::esletra(char c) const {
+bool New::esletra(char c) const {
 	bool salida = false;
 	int ascii = static_cast<int>(c);
 	if ((ascii >= 65) && (ascii <= 90)) {

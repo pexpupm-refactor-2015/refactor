@@ -1,45 +1,43 @@
 /*
- * Analizador.cpp
+ * Analyzer.cpp
  *
- *  Created on: 26-dic-2012
- *      Author: Alvaro
  */
-
-#include "Analizador.h"
+#include "Analyzer.h"
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <cstring>
 #include <string.h>
-#include "Noticia.h"
+#include "New.h"
 
 const std::string NEWS_FILE_PREFIX = "/newC";
 const std::string NEWS_FILE_SUFFIX = ".ES.txt";
 const std::string NEWS_PATH = "/news";
 const std::string RESTRICTED_WORDS = "/ES_stopList.txt";
 
-Analizador::Analizador() :
-		noticias(), ruta()
+Analyzer::Analyzer() :
+		m_news_list(), m_path()
 {
 	;
 }
 
-Analizador::Analizador(std::string ruta) :
-		ruta(ruta)
+Analyzer::Analyzer(std::string path) :
+		m_path(path)
 {
-	this->setNoticias(ruta);
+	this->setNews(path);
 }
 
-const std::string Analizador::getRutaFinal(const std::string& ruta_noticias,
+const std::string Analyzer::getFinalPath(const std::string& news_path,
 										   const int& xshift,
-										   const int& yshift) const {
-	std::string nombreArchivo = NEWS_FILE_PREFIX + this->rellenarCeros(xshift, 5) + "_"
-			+ this->rellenarCeros(yshift, 3) + NEWS_FILE_SUFFIX;
-    return ruta_noticias + nombreArchivo;
+										   const int& yshift) const
+{
+  std::string file_name = NEWS_FILE_PREFIX + this->zeroPadding(xshift, 5)
+     + "_" + this->zeroPadding(yshift, 3) + NEWS_FILE_SUFFIX;
+  return news_path + file_name;
 }
 
-void Analizador::parseNews(std::ifstream& f,
+void Analyzer::parseNews(std::ifstream& f,
 						   const std::string& restricted_words_path)
 {
 	std::string colector = "";
@@ -54,17 +52,17 @@ void Analizador::parseNews(std::ifstream& f,
 				cuerpo = cuerpo + " " + colector;
 			}
 		}
-		Noticia n(titulo, cuerpo, restricted_words_path);
+		New n(titulo, cuerpo, restricted_words_path);
 		titulo = "";
 		cuerpo = "";
-		this->noticias.push_front(n);
+		m_news_list.push_front(n);
 	}
 }
 
-void Analizador::setNoticias(const std::string& ruta) {
+void Analyzer::setNews(const std::string& ruta) {
 
 	std::string rutaRestricciones = ruta + RESTRICTED_WORDS;
-	std::string rutaNoticias = ruta + NEWS_PATH;
+	std::string rutaNews = ruta + NEWS_PATH;
 
 	int x = 1;
 	int y = 1;
@@ -73,7 +71,7 @@ void Analizador::setNoticias(const std::string& ruta) {
 	std::ifstream f;
 
 	do {
-		std::string rutaFinal = getRutaFinal(rutaNoticias, x, y);
+		std::string rutaFinal = getFinalPath(rutaNews, x, y);
 		std::ifstream f;
 		f.open(rutaFinal.c_str(), std::ofstream::in);
 		parseNews(f, rutaRestricciones);
@@ -97,54 +95,53 @@ void Analizador::setNoticias(const std::string& ruta) {
 	} while (continue_parsing);
 }
 
-std::string Analizador::agruparNoticias() {
+std::string Analyzer::groupNews() {
 
-	this->ordenarNoticias();
+	this->sortNews();
 
-	std::list<Noticia> lista = this->noticias;
-	std::string salida = "";
-	std::string entidad = "";
-	for (std::list<Noticia>::iterator it = lista.begin(); it != lista.end();
-			it++) {
+	std::string output = "";
+	std::string entity = "";
+	std::list<New>::iterator it;
+	for (it = m_news_list.begin(); it != m_news_list.end(); it++) {
 
-		Noticia n = *it;
-		if (entidad.compare(n.getMasFrecuente().getEntidadNombrada()) == 0) {
-			salida = salida + "*[" + n.getTitulo() + "]\n";
+		New n = *it;
+		if (entity.compare(n.getMasFrecuente().getEntidadNombrada()) == 0) {
+			output = output + "*[" + n.getTitulo() + "]\n";
 		} else {
-			entidad = n.getMasFrecuente().getEntidadNombrada();
-			salida = salida + "\n" + entidad + "\n" + "*[" + n.getTitulo()
+			entity = n.getMasFrecuente().getEntidadNombrada();
+			output = output + "\n" + entity + "\n" + "*[" + n.getTitulo()
 					+ "]\n";
 		}
 	}
 
-	return salida;
+	return output;
 }
 
-std::string Analizador::agruparNoticiasGeneral() {
+std::string Analyzer::groupGeneralNews() {
 
-	std::list<EntidadNombrada> agrupacion[this->noticias.size()];
+	std::list<EntidadNombrada> agrupacion[m_news_list.size()];
 
-	this->ordenarNoticias();
+	this->sortNews();
 
-	std::list<Noticia> ln1 = this->noticias;
-	std::list<Noticia> ln2 = this->noticias;
+	std::list<New> ln1 = this->m_news_list;
+	std::list<New> ln2 = this->m_news_list;
 
 	std::string salida = "";
 	std::string agrupaciones = "";
-	Noticia n2;
+	New n2;
 	EntidadNombrada en;
 	EntidadNombrada en2;
 	EntidadNombrada en3;
 
 	unsigned int c = 0;
-	for (std::list<Noticia>::iterator it1 = ln1.begin(); it1 != ln1.end();
+	for (std::list<New>::iterator it1 = ln1.begin(); it1 != ln1.end();
 			it1++) {
 
 		bool sola = true;
-		Noticia& n = *it1;
-		for (std::list<Noticia>::iterator it2 = ln1.begin(); it2 != ln1.end();
+		New& n = *it1;
+		for (std::list<New>::iterator it2 = ln1.begin(); it2 != ln1.end();
 				it2++) {
-			Noticia& n2 = *it2;
+			New& n2 = *it2;
 
 			if ((distance(it1, it2) != 0)) {
 				if ((n.esAgrupable(n2)) || (n2.esAgrupable(n))) {
@@ -181,9 +178,9 @@ std::string Analizador::agruparNoticiasGeneral() {
 
 			EntidadNombrada& en3 = *it4;
 
-			for (std::list<Noticia>::iterator it5 = ln2.begin();
+			for (std::list<New>::iterator it5 = ln2.begin();
 					it5 != ln2.end(); it5++) {
-				Noticia& n = *it5;
+				New& n = *it5;
 
 				if (n.getMasFrecuente().esIgual(en3)) {
 					if (agrupaciones == "") {
@@ -203,7 +200,7 @@ std::string Analizador::agruparNoticiasGeneral() {
 	return salida;
 }
 
-std::string Analizador::rellenarCeros(int n, int size) const {
+std::string Analyzer::zeroPadding(int n, int size) const {
 	std::stringstream ss;
 	ss << n;
 	std::string aux = ss.str();
@@ -213,19 +210,19 @@ std::string Analizador::rellenarCeros(int n, int size) const {
 	return aux;
 }
 
-void Analizador::ordenarNoticias() {
+void Analyzer::sortNews() {
 
-	Noticia aux[this->noticias.size()];
+	New aux[this->m_news_list.size()];
 	int c = 0;
-	for (std::list<Noticia>::iterator it = this->noticias.begin();
-			it != this->noticias.end(); it++) {
-		Noticia n = *it;
+	for (std::list<New>::iterator it = m_news_list.begin();
+			it != m_news_list.end(); it++) {
+		New n = *it;
 		aux[c] = n;
 		c++;
 	}
 
-	int tam = this->noticias.size();
-	Noticia temp;
+	int tam = m_news_list.size();
+	New temp;
 	for (int i = 1; i < tam; i++) {
 		for (int j = 0; j < tam - 1; j++) {
 			if (aux[j].getMasFrecuente().getEntidadNombrada()
@@ -237,13 +234,13 @@ void Analizador::ordenarNoticias() {
 		}
 	}
 
-	this->noticias.clear();
+	m_news_list.clear();
 	for (int i = 0; i < tam; i++) {
-		this->noticias.push_back(aux[i]);
+		m_news_list.push_back(aux[i]);
 	}
 }
 
-bool Analizador::existe(std::list<EntidadNombrada> es,
+bool Analyzer::exists(std::list<EntidadNombrada> es,
 		EntidadNombrada e) const {
 	bool salida = false;
 	EntidadNombrada aux;
@@ -257,15 +254,14 @@ bool Analizador::existe(std::list<EntidadNombrada> es,
 	return salida;
 }
 
-std::string Analizador::toString() const {
-	std::list<Noticia> lista = this->noticias;
+std::string Analyzer::toString() const {
 	std::string salida = "";
-	Noticia aux;
-	for (std::list<Noticia>::iterator it = lista.begin(); it != lista.end();
-			it++) {
+	New aux;
+ std::list<New>::const_iterator it;
+	for (it = m_news_list.begin(); it != m_news_list.end(); it++) {
 		aux = *it;
 		if (salida == "") {
-			salida = salida + "Ruta del directorio: " + this->ruta + "\n\n";
+			salida = salida + "Ruta del directorio: " + this->m_path + "\n\n";
 		}
 		salida = salida + "Titulo: " + aux.getTitulo() + "\n\n";
 	}

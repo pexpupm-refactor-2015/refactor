@@ -1,9 +1,9 @@
-#include "Analizador.h"
+#include "Analyzer.h"
 #include "gtest/gtest.h"
 
 // Test of parsing a first bunch of news, get path of news and titles
 TEST(Analyzer, toString) {
-  Analizador analyzer("../data_test");
+  Analyzer analyzer("../data_test");
   std::string expected("Ruta del directorio: ../data_test\n\n"
 		  "Titulo:  Detenidos en Reino Unido dos adolescentes sospechosos de matar de un disparo a un menor \n\n"
 		  "Titulo:  Detenidos cinco menores en relaci\xF3n con el asesinato de el ni\xF1o de Liverpool \n\n"
@@ -18,7 +18,7 @@ TEST(Analyzer, toString) {
 
 // Test of a first bunch of news, group by entity
 TEST(Analyzer, newsGroupByEntity) {
-  Analizador analyzer("../data_test");
+  Analyzer analyzer("../data_test");
 
   std::string expected("\nJones\n"
 		  "*[ Detenidos en Reino Unido dos adolescentes sospechosos de matar de un disparo a un menor ]\n\n"
@@ -32,12 +32,12 @@ TEST(Analyzer, newsGroupByEntity) {
 		  "*[ La polic\xED" "a pone en libertad a los sospechosos de el asesinato de el ni\xF1o de Liverpool ]\n"
 		  "*[ Siguen los interrogatorios a los detenidos por el asesinato de el ni\xF1o de Liverpool ]\n"
 		  "*[ Liberan a los dos sospechosos detenidos por el asesinato de un ni\xF1o de 11 a\xF1os en Liverpool ]\n");
-  EXPECT_EQ(analyzer.agruparNoticias(), expected);
+  EXPECT_EQ(analyzer.groupNews(), expected);
 }
 
 // Test of a first bunch of news, group by references
 TEST(Analyzer, newsGroupByReference) {
-  Analizador analyzer("../data_test");
+  Analyzer analyzer("../data_test");
 
   std::string expected("[ Detenidos en Reino Unido dos adolescentes sospechosos de matar de un disparo a un menor ]\n"
 		  "   *[ Liberan a los dos sospechosos de el asesinato de un ni\xF1o en Liverpool ]\n"
@@ -47,6 +47,6 @@ TEST(Analyzer, newsGroupByReference) {
 		  "   *[ La polic\xED" "a pone en libertad a los sospechosos de el asesinato de el ni\xF1o de Liverpool ]\n"
 		  "   *[ Siguen los interrogatorios a los detenidos por el asesinato de el ni\xF1o de Liverpool ]\n"
 		  "   *[ Liberan a los dos sospechosos detenidos por el asesinato de un ni\xF1o de 11 a\xF1os en Liverpool ]\n\n");
-  EXPECT_EQ(analyzer.agruparNoticiasGeneral(), expected);
+  EXPECT_EQ(analyzer.groupGeneralNews(), expected);
 }
 
