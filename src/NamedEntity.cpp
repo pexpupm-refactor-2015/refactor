@@ -1,9 +1,7 @@
 /*
  * NamedEntity.cpp
- *
  */
 #include <sstream>
-
 #include "NamedEntity.h"
 
 NamedEntity::NamedEntity() :
@@ -23,11 +21,11 @@ std::string NamedEntity::getNamedEntity() const {
 }
 
 void NamedEntity::setFrequency(int const f) {
-	this->m_frequency = f;
+	m_frequency = f;
 }
 
 void NamedEntity::setNamedEntity(std::string const en) {
-	this->m_named_entity = en;
+	m_named_entity = en;
 }
 
 bool NamedEntity::equals(const NamedEntity& en) const {
@@ -40,6 +38,6 @@ bool NamedEntity::equals(const NamedEntity& en) const {
 
 std::string NamedEntity::toString() const {
 	std::stringstream s;
-	s << this->m_named_entity << " [" << this->m_frequency << "]";
+	s << m_named_entity << " [" << m_frequency << "]";
 	return s.str();
 }

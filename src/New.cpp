@@ -9,72 +9,74 @@
 #include "New.h"
 #include "NamedEntity.h"
 
-New::New() {
-	this->m_title = "";
-	this->m_body = "";
-	std::list<NamedEntity> l;
-	this->m_entities = l;
-	std::list<std::string> p;
-	this->m_entities_r = p;
-	NamedEntity e;
-	this->m_more_frequent = e;
+New::New() : 
+  m_title(), m_body(),
+  m_entities(), m_entities_r(),
+  m_more_frequent()
+{
+  ;
 }
 
-New::New(std::string title, std::string body, std::string path) {
-	this->m_title = title;
-	this->m_body = body;
-	this->setReservedWords(path);
-	this->setEntities();
-	this->setMoreFrequent();
+New::New(const std::string& title, const std::string& body,
+         const std::string& path) :
+  m_title(title), m_body(body)
+{
+	setReservedWords(path);
+	setEntities();
+	setMoreFrequent();
 }
 
-void New::setTitle(std::string title) {
-	this->m_title = title;
+void New::setTitle(const std::string& title)
+{
+	m_title = title;
 }
 
-void New::setBody(std::string body) {
-	this->m_body = body;
+void New::setBody(const std::string& body)
+{
+	m_body = body;
 }
 
-void New::setReservedWords(std::string path) {
+void New::setReservedWords(const std::string& path) {
 	std::ifstream f;
 	f.open(path.c_str(), std::ofstream::in);
 	assert(f.good());
 	std::string aux;
 	while (!f.eof()) {
 		f >> aux;
-		this->m_entities_r.push_back(aux);
+		m_entities_r.push_back(aux);
 	}
 }
 
 void New::update() {
-	this->setEntities();
-	this->setMoreFrequent();
+	setEntities();
+	setMoreFrequent();
 }
 
 std::string New::getTitle() const {
-	return this->m_title;
+	return m_title;
 }
 
 std::string New::getBody() const {
-	return this->m_body;
+	return m_body;
 }
 
 NamedEntity New::getMoreFrequent() const {
-	return this->m_more_frequent;
+	return m_more_frequent;
 }
 
-std::list<NamedEntity> New::getEntities() const {
-	return this->m_entities;
+std::list<NamedEntity> New::getEntities() const
+{
+	return m_entities;
 }
 
-std::list<std::string> New::getReservedWords() const {
-	return this->m_entities_r;
+std::list<std::string> New::getReservedWords() const
+{
+	return m_entities_r;
 }
 
-std::list<NamedEntity> New::getRelevantEntities() const {
-
-	std::string aux = this->m_body;
+std::list<NamedEntity> New::getRelevantEntities() const
+{
+	std::string aux = m_body;
 	std::list<NamedEntity> relevant_entities;
 
 	NamedEntity en;
@@ -86,99 +88,112 @@ std::list<NamedEntity> New::getRelevantEntities() const {
 			relevant_entities.push_back(en);
 		}
 	}
-
 	return relevant_entities;
 }
 
-bool New::canBeGrouped(New n) const {
-
-	bool output = false;
-
-	if (this->m_title.find(n.getMoreFrequent().getNamedEntity())
-			!= std::string::npos) {
-		output = true;
-	}
-
-	std::list<NamedEntity> first = this->getRelevantEntities();
-	std::list<NamedEntity> second = n.getRelevantEntities();
-	std::list<NamedEntity> final;
+void New::mergeNamedEntities(const std::list<NamedEntity> first,
+                            const std::list<NamedEntity> second,
+                            std::list<NamedEntity>& merged) const
+{
 	NamedEntity en1;
 	NamedEntity en2;
 
-	for (std::list<NamedEntity>::iterator it1 = first.begin();
+	for (std::list<NamedEntity>::const_iterator it1 = first.begin();
 			it1 != first.end(); it1++) {
 
 		en1 = *it1;
-		for (std::list<NamedEntity>::iterator it2 = second.begin();
+		for (std::list<NamedEntity>::const_iterator it2 = second.begin();
 				it2 != second.end(); it2++) {
 
 			en2 = *it2;
 			if (en1.equals(en2)) {
-				final.push_back(en2);
+				merged.push_back(en2);
 			}
 		}
 	}
+}
 
-	if (final.size() >= (second.size() / 3)) {
+
+bool New::canBeGrouped(const New& analyzed_new) const
+{
+	bool output = false;
+
+	if (m_title.find(analyzed_new.getMoreFrequent().getNamedEntity())
+			!= std::string::npos) {
 		output = true;
 	}
+
+	std::list<NamedEntity> first = getRelevantEntities();
+	std::list<NamedEntity> second = analyzed_new.getRelevantEntities();
+	std::list<NamedEntity> final;
+
+	mergeNamedEntities(first, second, final);
+
+	if (final.size() >= (second.size() / 3))
+ {
+		output = true;
+	}
+
 	return output;
 }
 
-std::string New::toString() const {
-
+std::string New::toString() const
+{
 	std::string output;
-	output = "TITLE: " + this->m_title + "\n" + "BODY: " + this->m_body + "\n"
-			+ "ENTITIES: ";
+	output = "TITLE: " + m_title + "\n" + "BODY: " + m_body + "\n" + "ENTITIES: ";
 
-	std::list<NamedEntity> entities_list = this->getEntities();
+	std::list<NamedEntity> entities_list = getEntities();
+  std::list<NamedEntity>::iterator entities_it;
 
-	for (std::list<NamedEntity>::iterator i = entities_list.begin();
-			i != entities_list.end(); i++) {
-		output += i->toString();
+	for (entities_it = entities_list.begin();
+      entities_it != entities_list.end(); entities_it++) {
+		output += (*entities_it).toString();
 		output += " ";
 	}
 
-	output = output + "\n" + "MAS FRECUENTE: "
-			+ getMoreFrequent().toString();
+	output = output + "\n" + "MAS FRECUENTE: " + getMoreFrequent().toString();
 
 	return output;
 }
 
-void New::setEntities() {
+void New::setEntities()
+{
 	std::string aux = "";
 
-	for (unsigned int i = 0; i <= this->m_body.size(); i++) {
-		if (this->m_body[i] != ' ') {
-			if (this->isLetter(this->m_body[i])) {
-				aux += this->m_body[i];
+	for (unsigned int i = 0; i <= m_body.size(); i++) {
+		if (m_body[i] != ' ') {
+			if (isLetter(m_body[i])) {
+				aux += m_body[i];
 			}
 		} else {
-			this->addEntity(aux);
+			addEntity(aux);
 			aux = "";
 		}
 	}
 }
 
-void New::setMoreFrequent() {
+void New::setMoreFrequent()
+{
 	NamedEntity aux;
 	NamedEntity aux2;
-	for (std::list<NamedEntity>::iterator i = this->m_entities.begin();
-			i != this->m_entities.end(); ++i) { // Iterate through 'items'
-		aux2 = *i;
+ std::list<NamedEntity>::iterator entities_it;
+   for (entities_it = m_entities.begin(); entities_it != m_entities.end();
+        ++entities_it) { 
+		aux2 = *entities_it;
 		if (aux.getFrequency() < aux2.getFrequency()) {
 			aux.setNamedEntity(aux2.getNamedEntity());
 			aux.setFrequency(aux2.getFrequency());
 		}
 	}
-	this->m_more_frequent = aux;
+	m_more_frequent = aux;
 }
 
-void New::addEntity(std::string nombre) {
+void New::addEntity(const std::string& entity_name)
+{
 	bool must_start = true;
-	for (std::list<std::string>::iterator i = this->m_entities_r.begin();
-			i != this->m_entities_r.end(); i++) {
-		std::string aux = nombre;
+	for (std::list<std::string>::iterator i = m_entities_r.begin();
+			i != m_entities_r.end(); i++) {
+		std::string aux = entity_name;
 		int ascii = static_cast<int>(aux[0]);
 		if ((ascii >= 65) && (ascii <= 90)) {
 			aux[0] = static_cast<char>(aux[0] + 32);
@@ -189,24 +204,24 @@ void New::addEntity(std::string nombre) {
 	}
 	if (must_start) {
 		bool add = true;
-		for (std::list<NamedEntity>::iterator it = this->m_entities.begin();
-				it != this->m_entities.end(); it++) {
-			if (it->getNamedEntity().compare(nombre) == 0) {
+		for (std::list<NamedEntity>::iterator it = m_entities.begin();
+				it != m_entities.end(); it++) {
+			if (it->getNamedEntity().compare(entity_name) == 0) {
 				it->setFrequency(it->getFrequency() + 1);
 				add = false;
 			}
 		}
 		if (add) {
-			int aux = static_cast<int>(nombre[0]);
+			int aux = static_cast<int>(entity_name[0]);
 			if ((aux >= 65) && (aux <= 90)) {
-				NamedEntity aux(nombre, 1);
-				this->m_entities.push_back(aux);
+				NamedEntity aux(entity_name, 1);
+				m_entities.push_back(aux);
 			}
 		}
 	}
 }
 
-bool New::isLetter(char c) const {
+bool New::isLetter(const char& c) const {
 	bool output = false;
 	int ascii = static_cast<int>(c);
 	if ((ascii >= 65) && (ascii <= 90)) {
