@@ -238,12 +238,15 @@ void Analyzer::sortNews()
 		c++;
 	}
 
-	int tam = m_news_list.size();
+	int news_list_size = m_news_list.size();
 	New temp;
-	for (int i = 1; i < tam; i++) {
-		for (int j = 0; j < tam - 1; j++) {
+	for (int i = 1; i < news_list_size; i++)
+	{
+		for (int j = 0; j < news_list_size - 1; j++)
+		{
 			if (aux[j].getMoreFrequent().getNamedEntity()
-					> aux[j + 1].getMoreFrequent().getNamedEntity()) {
+					> aux[j + 1].getMoreFrequent().getNamedEntity())
+			{
 				temp = aux[j];
 				aux[j] = aux[j + 1];
 				aux[j + 1] = temp;
@@ -252,13 +255,15 @@ void Analyzer::sortNews()
 	}
 
 	m_news_list.clear();
-	for (int i = 0; i < tam; i++) {
+
+	for (int i = 0; i < news_list_size; i++)
+	{
 		m_news_list.push_back(aux[i]);
 	}
 }
 
-bool Analyzer::exists(std::list<NamedEntity> es,
-		NamedEntity e) const {
+bool Analyzer::exists(std::list<NamedEntity> es, NamedEntity e) const
+{
 	bool output = false;
 	NamedEntity aux;
 	for (std::list<NamedEntity>::iterator it = es.begin(); it != es.end();
