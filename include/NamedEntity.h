@@ -6,16 +6,16 @@
 #define NAMED_ENTITY_H_
 #include <string>
 
-class NamedEntity {
-
+class NamedEntity
+{
 public:
 	NamedEntity();
 	NamedEntity(std::string n, int f);
 	int getFrequency() const;
 	std::string getNamedEntity() const;
-	void setFrequency(int const f);
-	void setNamedEntity(std::string const en);
-	bool equals(const NamedEntity& en) const;
+	void setFrequency(const int& frequency);
+	void setNamedEntity(const std::string& entity);
+	bool equals(const NamedEntity& entity) const;
 	std::string toString() const;
 
 private:

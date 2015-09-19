@@ -1,14 +1,13 @@
 /*
  * Analyzer.cpp
- *
  */
-#include "Analyzer.h"
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <cstring>
 #include <string.h>
+#include "Analyzer.h"
 #include "New.h"
 
 const std::string NEWS_FILE_PREFIX = "/newC";
@@ -25,20 +24,20 @@ Analyzer::Analyzer() :
 Analyzer::Analyzer(std::string path) :
 		m_path(path)
 {
-	this->setNews(path);
+	setNews(path);
 }
 
 const std::string Analyzer::getFinalPath(const std::string& news_path,
-										   const int& xshift,
-										   const int& yshift) const
+                                         const int& xshift,
+                                         const int& yshift) const
 {
-  std::string file_name = NEWS_FILE_PREFIX + this->zeroPadding(xshift, 5)
-     + "_" + this->zeroPadding(yshift, 3) + NEWS_FILE_SUFFIX;
+  std::string file_name = NEWS_FILE_PREFIX + zeroPadding(xshift, 5)
+     + "_" + zeroPadding(yshift, 3) + NEWS_FILE_SUFFIX;
   return news_path + file_name;
 }
 
 void Analyzer::parseNews(std::ifstream& f,
-						   const std::string& restricted_words_path)
+                         const std::string& restricted_words_path)
 {
 	std::string collector = "";
 	std::string title = "";
@@ -57,8 +56,8 @@ void Analyzer::parseNews(std::ifstream& f,
 	}
 }
 
-void Analyzer::setNews(const std::string& ruta) {
-
+void Analyzer::setNews(const std::string& ruta)
+{
 	std::string restriction_path = ruta + RESTRICTED_WORDS;
 	std::string news_path = ruta + NEWS_PATH;
 
@@ -93,94 +92,94 @@ void Analyzer::setNews(const std::string& ruta) {
 	} while (continue_parsing);
 }
 
-std::string Analyzer::groupNews() {
-
-	this->sortNews();
+std::string Analyzer::groupNews()
+{
+	sortNews();
 
 	std::string output = "";
 	std::string entity = "";
 	std::list<New>::iterator it;
-	for (it = m_news_list.begin(); it != m_news_list.end(); it++) {
-
-		New n = *it;
-		if (entity.compare(n.getMoreFrequent().getNamedEntity()) == 0) {
-			output = output + "*[" + n.getTitle() + "]\n";
-		} else {
-			entity = n.getMoreFrequent().getNamedEntity();
-			output = output + "\n" + entity + "\n" + "*[" + n.getTitle()
-					+ "]\n";
+	for (it = m_news_list.begin(); it != m_news_list.end(); it++)
+ {
+		New new1 = *it;
+		if (entity.compare(new1.getMoreFrequent().getNamedEntity()) == 0) 
+  {
+			output = output + "*[" + new1.getTitle() + "]\n";
+		}
+  else {
+			entity = new1.getMoreFrequent().getNamedEntity();
+			output = output + "\n" + entity + "\n" + "*[" + new1.getTitle() + "]\n";
 		}
 	}
-
 	return output;
 }
 
-std::string Analyzer::groupGeneralNews() {
-
+std::string Analyzer::groupGeneralNews()
+{
 	std::list<NamedEntity> group[m_news_list.size()];
+	sortNews();
 
-	this->sortNews();
-
-	std::list<New> ln1 = this->m_news_list;
-	std::list<New> ln2 = this->m_news_list;
+	std::list<New> ln1 = m_news_list;
+	std::list<New> ln2 = m_news_list;
 
 	std::string output = "";
 	std::string groups = "";
-	New n2;
-	NamedEntity en;
-	NamedEntity en2;
-	NamedEntity en3;
+	NamedEntity entity2;
+	NamedEntity entity3;
 
 	unsigned int c = 0;
-	for (std::list<New>::iterator it1 = ln1.begin(); it1 != ln1.end();
-			it1++) {
-
-		bool sola = true;
+	for (std::list<New>::iterator it1 = ln1.begin(); it1 != ln1.end(); it1++)
+ {
+		bool alone = true;
 		New& n = *it1;
-		for (std::list<New>::iterator it2 = ln1.begin(); it2 != ln1.end();
-				it2++) {
+		for (std::list<New>::iterator it2 = ln1.begin(); it2 != ln1.end(); it2++)
+  {
 			New& n2 = *it2;
 
-			if ((distance(it1, it2) != 0)) {
-				if ((n.canBeGrouped(n2)) || (n2.canBeGrouped(n))) {
+			if ((distance(it1, it2) != 0))
+   {
+				if ((n.canBeGrouped(n2)) || (n2.canBeGrouped(n)))
+    {
 					group[c].push_back(n.getMoreFrequent());
 					group[c].push_back(n2.getMoreFrequent());
 					it2 = ln1.erase(it2);
-					sola = false;
+					alone = false;
 				}
 			}
 		}
 
 		for (std::list<NamedEntity>::iterator it3 = group[c].begin();
-				it3 != group[c].end(); it3++) {
-			en2 = *it3;
+				it3 != group[c].end(); it3++)
+  {
+			entity2 = *it3;
 			for (std::list<NamedEntity>::iterator it4 =
 					group[c].begin(); it4 != group[c].end(); it4++) {
-				en3 = *it4;
-				if ((en2.equals(en3)) && (distance(it3, it4) != 0)) {
+				entity3 = *it4;
+				if ((entity2.equals(entity3)) && (distance(it3, it4) != 0)) {
 					it4 = group[c].erase(it4);
 				}
 			}
 		}
-		if (sola) {
+		if (alone) {
 			group[c].push_back(n.getMoreFrequent());
 			it1 = ln1.erase(it1);
 		}
-
 		c++;
 	}
 
-	for (unsigned int c = 0; c < ln1.size(); c++) {
+	for (unsigned int c = 0; c < ln1.size(); c++)
+	{
 		for (std::list<NamedEntity>::iterator it4 = group[c].begin();
 				it4 != group[c].end(); it4++) {
 
-			NamedEntity& en3 = *it4;
+			NamedEntity& entity3 = *it4;
 
 			for (std::list<New>::iterator it5 = ln2.begin();
-					it5 != ln2.end(); it5++) {
+					it5 != ln2.end(); it5++)
+			{
 				New& n = *it5;
 
-				if (n.getMoreFrequent().equals(en3)) {
+				if (n.getMoreFrequent().equals(entity3)) {
 					if (groups == "") {
 						groups = groups + "[" + n.getTitle()
 								+ "]\n";
@@ -192,9 +191,8 @@ std::string Analyzer::groupGeneralNews() {
 			}
 		}
 		output = output + groups + "\n";
-  groups = "";
+		groups = "";
 	}
-
 	return output;
 }
 
@@ -211,7 +209,7 @@ std::string Analyzer::zeroPadding(int n, int size) const
 
 void Analyzer::sortNews()
 {
-	New aux[this->m_news_list.size()];
+	New aux[m_news_list.size()];
 	int c = 0;
 	for (std::list<New>::iterator it = m_news_list.begin();
 			it != m_news_list.end(); it++) {
@@ -244,23 +242,27 @@ bool Analyzer::exists(std::list<NamedEntity> es,
 	bool output = false;
 	NamedEntity aux;
 	for (std::list<NamedEntity>::iterator it = es.begin(); it != es.end();
-			it++) {
+			it++)
+	{
 		aux = *it;
-		if (aux.getNamedEntity().compare(e.getNamedEntity()) == 0) {
+		if (aux.getNamedEntity().compare(e.getNamedEntity()) == 0)
+		{
 			output = true;
 		}
 	}
 	return output;
 }
 
-std::string Analyzer::toString() const {
+std::string Analyzer::toString() const
+{
 	std::string output = "";
 	New aux;
- std::list<New>::const_iterator it;
-	for (it = m_news_list.begin(); it != m_news_list.end(); it++) {
+	std::list<New>::const_iterator it;
+	for (it = m_news_list.begin(); it != m_news_list.end(); it++)
+	{
 		aux = *it;
 		if (output == "") {
-			output = output + "Ruta del directorio: " + this->m_path + "\n\n";
+			output = output + "Ruta del directorio: " + m_path + "\n\n";
 		}
 		output = output + "Titulo: " + aux.getTitle() + "\n\n";
 	}

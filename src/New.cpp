@@ -160,12 +160,14 @@ void New::setEntities()
 {
 	std::string aux = "";
 
-	for (unsigned int i = 0; i <= m_body.size(); i++) {
+	for (unsigned int i = 0; i <= m_body.size(); i++)
+	{
 		if (m_body[i] != ' ') {
 			if (isLetter(m_body[i])) {
 				aux += m_body[i];
 			}
-		} else {
+		}
+		else {
 			addEntity(aux);
 			aux = "";
 		}
@@ -180,7 +182,8 @@ void New::setMoreFrequent()
    for (entities_it = m_entities.begin(); entities_it != m_entities.end();
         ++entities_it) { 
 		aux2 = *entities_it;
-		if (aux.getFrequency() < aux2.getFrequency()) {
+		if (aux.getFrequency() < aux2.getFrequency())
+		{
 			aux.setNamedEntity(aux2.getNamedEntity());
 			aux.setFrequency(aux2.getFrequency());
 		}
@@ -205,7 +208,8 @@ void New::addEntity(const std::string& entity_name)
 	if (must_start) {
 		bool add = true;
 		for (std::list<NamedEntity>::iterator it = m_entities.begin();
-				it != m_entities.end(); it++) {
+				it != m_entities.end(); it++)
+		{
 			if (it->getNamedEntity().compare(entity_name) == 0) {
 				it->setFrequency(it->getFrequency() + 1);
 				add = false;
@@ -221,7 +225,8 @@ void New::addEntity(const std::string& entity_name)
 	}
 }
 
-bool New::isLetter(const char& c) const {
+bool New::isLetter(const char& c) const
+{
 	bool output = false;
 	int ascii = static_cast<int>(c);
 	if ((ascii >= 65) && (ascii <= 90)) {
