@@ -42,8 +42,10 @@ void Analyzer::parseNews(std::ifstream& f,
 	std::string collector = "";
 	std::string title = "";
 	std::string body = "";
-	if (f.is_open()) {
-		while (!f.eof()) {
+	if (f.is_open())
+	{
+		while (!f.eof())
+		{
 			getline(f, collector, '\n');
 			if (title == "") {
 				title = title + " " + collector;
@@ -56,40 +58,46 @@ void Analyzer::parseNews(std::ifstream& f,
 	}
 }
 
-void Analyzer::setNews(const std::string& ruta)
+void Analyzer::setNews(const std::string& path)
 {
-	std::string restriction_path = ruta + RESTRICTED_WORDS;
-	std::string news_path = ruta + NEWS_PATH;
+	std::string restriction_path = path + RESTRICTED_WORDS;
+	std::string news_path = path + NEWS_PATH;
 
-	int x = 1;
-	int y = 1;
+	int group_desc = 1;
+	int new_desc = 1;
 	bool continue_parsing = true;
 	bool more_files = false;
 	std::ifstream f;
-
-	do {
-		std::string final_path = getFinalPath(news_path, x, y);
+	do
+	{
+		std::string final_path = getFinalPath(news_path, group_desc, new_desc);
 		std::ifstream f;
 		f.open(final_path.c_str(), std::ofstream::in);
 		parseNews(f, restriction_path);
-		y++;
-		if (y >= 999) {
-			if (!more_files) {
+		new_desc++;
+		if (new_desc >= 999)
+		{
+			if (!more_files)
+			{
 				continue_parsing = false;
-			} else {
-				x++;
-				y = 0;
+			}
+			else {
+				group_desc++;
+				new_desc = 0;
 				more_files = false;
 			}
 		}
-		if (f.is_open()) {
+		if (f.is_open())
+		{
 			more_files = true;
 		}
-		if (x >= 99999) {
+		if (group_desc >= 99999)
+		{
 			continue_parsing = false;
 		}
 		f.close();
-	} while (continue_parsing);
+	}
+	while (continue_parsing);
 }
 
 std::string Analyzer::groupNews()
@@ -102,7 +110,7 @@ std::string Analyzer::groupNews()
 	for (it = m_news_list.begin(); it != m_news_list.end(); it++)
  {
 		New new1 = *it;
-		if (entity.compare(new1.getMoreFrequent().getNamedEntity()) == 0) 
+		if (entity.compare(new1.getMoreFrequent().getNamedEntity()) == 0)
   {
 			output = output + "*[" + new1.getTitle() + "]\n";
 		}
@@ -196,12 +204,13 @@ std::string Analyzer::groupGeneralNews()
 	return output;
 }
 
-std::string Analyzer::zeroPadding(int n, int size) const
+std::string Analyzer::zeroPadding(const int& number, const int& size) const
 {
 	std::stringstream ss;
-	ss << n;
+	ss << number;
 	std::string aux = ss.str();
-	for (int i = aux.size(); i < size; i++) {
+	for (int i = aux.size(); i < size; i++)
+	{
 		aux = "0" + aux;
 	}
 	return aux;
@@ -268,4 +277,3 @@ std::string Analyzer::toString() const
 	}
 	return output;
 }
-

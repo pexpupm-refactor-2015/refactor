@@ -1,15 +1,15 @@
 /*
  * New.h
- *
  */
-#ifndef NEW_H_
-#define NEW_H_
-#include "string"
+#ifndef _NEW_H_
+#define _NEW_H_
+
+#include <string>
 #include <list>
 #include "NamedEntity.h"
 
-class New {
-
+class New
+{
 public:
 	New();
 	New(const std::string& title,

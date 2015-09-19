@@ -1,9 +1,9 @@
 /*
  * NamedEntity.h
- *
  */
-#ifndef NAMED_ENTITY_H_
-#define NAMED_ENTITY_H_
+#ifndef _NAMED_ENTITY_H_
+#define _NAMED_ENTITY_H_
+
 #include <string>
 
 class NamedEntity
@@ -23,4 +23,4 @@ private:
 	std::string m_named_entity;
 };
 
-#endif /* NAMED_ENTITY_H_ */
+#endif /* _NAMED_ENTITY_H_ */
