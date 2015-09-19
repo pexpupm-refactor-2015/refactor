@@ -14,80 +14,87 @@
 #include <string.h>
 #include "Noticia.h"
 
-Analizador::Analizador() {
-	std::list<Noticia> l;
-	this->noticias = l;
-	this->ruta = "";
+const std::string NEWS_FILE_PREFIX = "/newC";
+const std::string NEWS_FILE_SUFFIX = ".ES.txt";
+const std::string NEWS_PATH = "/news";
+const std::string RESTRICTED_WORDS = "/ES_stopList.txt";
+
+Analizador::Analizador() :
+		noticias(), ruta()
+{
+	;
 }
 
-Analizador::Analizador(std::string ruta) {
-	this->ruta = ruta;
-	this->setNoticas(ruta);
+Analizador::Analizador(std::string ruta) :
+		ruta(ruta)
+{
+	this->setNoticias(ruta);
 }
 
-std::list<Noticia> Analizador::getNoticias() const {
-	std::list<Noticia> l;
-	return l;
+const std::string Analizador::getRutaFinal(const std::string& ruta_noticias,
+										   const int& xshift,
+										   const int& yshift) const {
+	std::string nombreArchivo = NEWS_FILE_PREFIX + this->rellenarCeros(xshift, 5) + "_"
+			+ this->rellenarCeros(yshift, 3) + NEWS_FILE_SUFFIX;
+    return ruta_noticias + nombreArchivo;
 }
 
-void Analizador::setNoticas(std::string ruta) {
-
-	std::string rutaRestricciones = ruta + "/ES_stopList.txt";
-	std::string rutaNoticias = ruta + "/news";
-
-	int x = 1;
-	int y = 1;
-	std::string nombreArchivo = "";
-	bool mantener = true;
-	bool alerta = false;
-	std::ifstream f;
-	std::string rutaFinal = "";
+void Analizador::parseNews(std::ifstream& f,
+						   const std::string& restricted_words_path)
+{
 	std::string colector = "";
 	std::string titulo = "";
 	std::string cuerpo = "";
+	if (f.is_open()) {
+		while (!f.eof()) {
+			getline(f, colector, '\n');
+			if (titulo == "") {
+				titulo = titulo + " " + colector;
+			} else {
+				cuerpo = cuerpo + " " + colector;
+			}
+		}
+		Noticia n(titulo, cuerpo, restricted_words_path);
+		titulo = "";
+		cuerpo = "";
+		this->noticias.push_front(n);
+	}
+}
+
+void Analizador::setNoticias(const std::string& ruta) {
+
+	std::string rutaRestricciones = ruta + RESTRICTED_WORDS;
+	std::string rutaNoticias = ruta + NEWS_PATH;
+
+	int x = 1;
+	int y = 1;
+	bool continue_parsing = true;
+	bool more_files = false;
+	std::ifstream f;
 
 	do {
+		std::string rutaFinal = getRutaFinal(rutaNoticias, x, y);
 		std::ifstream f;
-		nombreArchivo = "/newC" + this->rellenarCeros(x, 5) + "_"
-				+ this->rellenarCeros(y, 3) + ".ES.txt";
-
-		rutaFinal = rutaNoticias + nombreArchivo;
-
 		f.open(rutaFinal.c_str(), std::ofstream::in);
-		if (f.is_open()) {
-			while (!f.eof()) {
-				getline(f, colector, '\n');
-				if (titulo == "") {
-					titulo = titulo + " " + colector;
-				} else {
-					cuerpo = cuerpo + " " + colector;
-				}
-			}
-			Noticia n(titulo, cuerpo, rutaRestricciones);
-			titulo = "";
-			cuerpo = "";
-			this->noticias.push_front(n);
-		}
+		parseNews(f, rutaRestricciones);
 		y++;
-
 		if (y >= 999) {
-			if (!alerta) {
-				mantener = false;
+			if (!more_files) {
+				continue_parsing = false;
 			} else {
 				x++;
 				y = 0;
-				alerta = false;
+				more_files = false;
 			}
 		}
 		if (f.is_open()) {
-			alerta = true;
+			more_files = true;
 		}
 		if (x >= 99999) {
-			mantener = false;
+			continue_parsing = false;
 		}
 		f.close();
-
-	} while (mantener);
+	} while (continue_parsing);
 }
 
 std::string Analizador::agruparNoticias() {
