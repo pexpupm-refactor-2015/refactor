@@ -133,35 +133,79 @@ std::string Analyzer::groupNews()
 	return output;
 }
 
+std::string 
+Analyzer::groupToString(const std::list<NamedEntity> group[],
+                        const std::list<New>& processed_news_list,
+                        const std::list<New>& original_news_list) const
+{
+	std::string output;
+	std::string groups;
+
+	for (unsigned int c = 0; c < processed_news_list.size(); c++)
+	{
+		for (std::list<NamedEntity>::const_iterator it4 = group[c].begin();
+				it4 != group[c].end(); it4++)
+		{
+			const NamedEntity& entity3 = *it4;
+
+			std::list<New>::const_iterator news_it;
+			for (news_it = original_news_list.begin();
+									news_it != original_news_list.end();
+									news_it ++)
+			{
+				const New& n = *news_it;
+				if (n.getMoreFrequent().equals(entity3))
+				{
+					if (groups == "")
+					{
+						groups = groups + "[" + n.getTitle()
+								+ "]\n";
+					}
+					else
+					{
+						groups = groups + "   *[" + n.getTitle()
+								+ "]\n";
+					}
+				}
+			}
+		}
+		output = output + groups + "\n";
+		groups = "";
+	}
+ return output;
+}
+
 std::string Analyzer::groupGeneralNews()
 {
 	std::list<NamedEntity> group[m_news_list.size()];
 	sortNews();
-
-	std::list<New> ln1 = m_news_list;
-	std::list<New> ln2 = m_news_list;
-
-	std::string output = "";
-	std::string groups = "";
+	std::list<New> processed_news_list = m_news_list;
+	std::list<New> original_news_list = m_news_list;
 	NamedEntity entity2;
 	NamedEntity entity3;
-
 	unsigned int c = 0;
-	for (std::list<New>::iterator it1 = ln1.begin(); it1 != ln1.end(); it1++)
+
+ std::list<New>::iterator news_it;
+	for (news_it = processed_news_list.begin();
+						news_it != processed_news_list.end(); 
+						news_it++)
  {
 		bool alone = true;
-		New& n = *it1;
-		for (std::list<New>::iterator it2 = ln1.begin(); it2 != ln1.end(); it2++)
+		New& n = *news_it;
+  std::list<New>::iterator news_it2;
+		for (news_it2 = processed_news_list.begin();
+							news_it2 != processed_news_list.end(); 
+							news_it2++)
   {
-			New& n2 = *it2;
+			New& n2 = *news_it2;
 
-			if ((distance(it1, it2) != 0))
+			if ((distance(news_it, news_it2) != 0))
    {
 				if ((n.canBeGrouped(n2)) || (n2.canBeGrouped(n)))
     {
 					group[c].push_back(n.getMoreFrequent());
 					group[c].push_back(n2.getMoreFrequent());
-					it2 = ln1.erase(it2);
+					news_it2 = processed_news_list.erase(news_it2);
 					alone = false;
 				}
 			}
@@ -172,47 +216,24 @@ std::string Analyzer::groupGeneralNews()
   {
 			entity2 = *it3;
 			for (std::list<NamedEntity>::iterator it4 =
-					group[c].begin(); it4 != group[c].end(); it4++) {
+					group[c].begin(); it4 != group[c].end(); it4++)
+			{
 				entity3 = *it4;
-				if ((entity2.equals(entity3)) && (distance(it3, it4) != 0)) {
+				if ((entity2.equals(entity3)) && (distance(it3, it4) != 0))
+				{
 					it4 = group[c].erase(it4);
 				}
 			}
 		}
-		if (alone) {
+		if (alone)
+		{
 			group[c].push_back(n.getMoreFrequent());
-			it1 = ln1.erase(it1);
+			news_it = processed_news_list.erase(news_it);
 		}
 		c++;
 	}
 
-	for (unsigned int c = 0; c < ln1.size(); c++)
-	{
-		for (std::list<NamedEntity>::iterator it4 = group[c].begin();
-				it4 != group[c].end(); it4++) {
-
-			NamedEntity& entity3 = *it4;
-
-			for (std::list<New>::iterator it5 = ln2.begin();
-					it5 != ln2.end(); it5++)
-			{
-				New& n = *it5;
-
-				if (n.getMoreFrequent().equals(entity3)) {
-					if (groups == "") {
-						groups = groups + "[" + n.getTitle()
-								+ "]\n";
-					} else {
-						groups = groups + "   *[" + n.getTitle()
-								+ "]\n";
-					}
-				}
-			}
-		}
-		output = output + groups + "\n";
-		groups = "";
-	}
-	return output;
+	return groupToString(group, processed_news_list, original_news_list);
 }
 
 std::string Analyzer::zeroPadding(const int& number, const int& size) const

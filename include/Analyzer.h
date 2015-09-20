@@ -30,7 +30,10 @@ private:
 	const std::string getFinalPath(const std::string& ruta_noticias,
 																	const int& xshift,
 																	const int& yshift) const;
-	bool exists(std::list<NamedEntity> es, NamedEntity e)const;
+	bool exists(std::list<NamedEntity> es, NamedEntity e) const;
+	std::string groupToString(const std::list<NamedEntity> group[],
+																											const std::list<New>& processed_news_list,
+																											const std::list<New>& original_news_list) const;
 	std::list<New> m_news_list;
 	std::string m_path;
 };
