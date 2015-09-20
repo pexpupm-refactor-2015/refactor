@@ -116,11 +116,12 @@ void New::mergeNamedEntities(const std::list<NamedEntity> first,
 
 bool New::canBeGrouped(const New& analyzed_new) const
 {
-	bool output = false;
+	bool groupable = false;
 
 	if (m_title.find(analyzed_new.getMoreFrequent().getNamedEntity())
-			!= std::string::npos) {
-		output = true;
+			!= std::string::npos)
+	{
+		groupable = true;
 	}
 
 	std::list<NamedEntity> first = getRelevantEntities();
@@ -131,10 +132,10 @@ bool New::canBeGrouped(const New& analyzed_new) const
 
 	if (final.size() >= (second.size() / 3))
  {
-		output = true;
+		groupable = true;
 	}
 
-	return output;
+	return groupable;
 }
 
 std::string New::toString() const

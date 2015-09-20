@@ -14,4 +14,4 @@ $(GTEST_FILE): $(TEST_FILE) $(SOURCES)
 	$(CC) $(CC_FLAGS) -I$(INC_FILES) $(SOURCES) $(TEST_FILE) -o $@ $(GTEST_LINK_LIBS)
 
 clean:
-	-rm $(GTEST_FILE)
+	@rm -f $(GTEST_FILE)
