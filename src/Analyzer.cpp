@@ -175,14 +175,30 @@ Analyzer::groupToString(const std::list<NamedEntity> group[],
  return output;
 }
 
+void Analyzer::cleanDuplicatedEntities(std::list<NamedEntity>& list)
+{
+	for (std::list<NamedEntity>::iterator it3 = list.begin();
+      it3 != list.end(); it3++)
+ {
+		NamedEntity entity = *it3;
+		for (std::list<NamedEntity>::iterator it4 =
+				list.begin(); it4 != list.end(); it4++)
+		{
+			NamedEntity entity2 = *it4;
+			if ((entity.equals(entity2)) && (distance(it3, it4) != 0))
+			{
+				it4 = list.erase(it4);
+			}
+		}
+	}
+}
+
 std::string Analyzer::groupGeneralNews()
 {
-	std::list<NamedEntity> group[m_news_list.size()];
 	sortNews();
+	std::list<NamedEntity> group[m_news_list.size()];
 	std::list<New> processed_news_list = m_news_list;
 	std::list<New> original_news_list = m_news_list;
-	NamedEntity entity2;
-	NamedEntity entity3;
 	unsigned int c = 0;
 
  std::list<New>::iterator news_it;
@@ -210,21 +226,7 @@ std::string Analyzer::groupGeneralNews()
 				}
 			}
 		}
-
-		for (std::list<NamedEntity>::iterator it3 = group[c].begin();
-				it3 != group[c].end(); it3++)
-  {
-			entity2 = *it3;
-			for (std::list<NamedEntity>::iterator it4 =
-					group[c].begin(); it4 != group[c].end(); it4++)
-			{
-				entity3 = *it4;
-				if ((entity2.equals(entity3)) && (distance(it3, it4) != 0))
-				{
-					it4 = group[c].erase(it4);
-				}
-			}
-		}
+  cleanDuplicatedEntities(group[c]);
 		if (alone)
 		{
 			group[c].push_back(n.getMoreFrequent());
@@ -232,7 +234,6 @@ std::string Analyzer::groupGeneralNews()
 		}
 		c++;
 	}
-
 	return groupToString(group, processed_news_list, original_news_list);
 }
 
