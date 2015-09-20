@@ -175,7 +175,7 @@ Analyzer::groupToString(const std::list<NamedEntity> group[],
  return output;
 }
 
-void Analyzer::cleanDuplicatedEntities(std::list<NamedEntity>& list)
+void Analyzer::cleanDuplicatedEntities(std::list<NamedEntity>& list) const
 {
 	for (std::list<NamedEntity>::iterator it3 = list.begin();
       it3 != list.end(); it3++)
@@ -193,6 +193,37 @@ void Analyzer::cleanDuplicatedEntities(std::list<NamedEntity>& list)
 	}
 }
 
+bool Analyzer::groupPerNew(const New& the_new,
+                           std::list<NamedEntity>& group,
+                           std::list<New>& processed_news_list) const
+{
+	bool alone = true;
+ std::list<New>::iterator news_it2;
+	for (news_it2 = processed_news_list.begin();
+						news_it2 != processed_news_list.end(); 
+						news_it2++)
+ {
+		New& n2 = *news_it2;
+
+		if ((the_new != n2))
+  {
+			if ((the_new.canBeGrouped(n2)) || (n2.canBeGrouped(the_new)))
+   {
+				group.push_back(the_new.getMoreFrequent());
+				group.push_back(n2.getMoreFrequent());
+				news_it2 = processed_news_list.erase(news_it2);
+				alone = false;
+			}
+		}
+	}
+ cleanDuplicatedEntities(group);
+	if (alone)
+	{
+		group.push_back(the_new.getMoreFrequent());
+	}
+ return alone;
+}
+
 std::string Analyzer::groupGeneralNews()
 {
 	sortNews();
@@ -206,31 +237,9 @@ std::string Analyzer::groupGeneralNews()
 						news_it != processed_news_list.end(); 
 						news_it++)
  {
-		bool alone = true;
-		New& n = *news_it;
-  std::list<New>::iterator news_it2;
-		for (news_it2 = processed_news_list.begin();
-							news_it2 != processed_news_list.end(); 
-							news_it2++)
-  {
-			New& n2 = *news_it2;
-
-			if ((distance(news_it, news_it2) != 0))
-   {
-				if ((n.canBeGrouped(n2)) || (n2.canBeGrouped(n)))
-    {
-					group[c].push_back(n.getMoreFrequent());
-					group[c].push_back(n2.getMoreFrequent());
-					news_it2 = processed_news_list.erase(news_it2);
-					alone = false;
-				}
-			}
-		}
-  cleanDuplicatedEntities(group[c]);
-		if (alone)
+		if(groupPerNew(*news_it, group[c], processed_news_list))
 		{
-			group[c].push_back(n.getMoreFrequent());
-			news_it = processed_news_list.erase(news_it);
+				news_it = processed_news_list.erase(news_it);
 		}
 		c++;
 	}

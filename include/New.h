@@ -27,7 +27,8 @@ public:
 	std::list<NamedEntity> getRelevantEntities() const;
 	bool canBeGrouped(const New& analyzed_new) const;
 	std::string toString() const;
-
+	const bool operator==(const New& the_new) const; 
+	const bool operator!=(const New& the_new) const; 
 private:
 	void setEntities();
 	void setMoreFrequent();

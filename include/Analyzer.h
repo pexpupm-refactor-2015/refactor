@@ -34,7 +34,9 @@ private:
 	std::string groupToString(const std::list<NamedEntity> group[],
 																											const std::list<New>& processed_news_list,
 																											const std::list<New>& original_news_list) const;
-	void cleanDuplicatedEntities(std::list<NamedEntity>& list);
+	void cleanDuplicatedEntities(std::list<NamedEntity>& list) const;
+	bool groupPerNew(const New& the_new, std::list<NamedEntity>& group,
+                  std::list<New>& processed_news_list) const;
 	std::list<New> m_news_list;
 	std::string m_path;
 };

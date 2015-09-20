@@ -36,7 +36,8 @@ void New::setBody(const std::string& body)
 	m_body = body;
 }
 
-void New::setReservedWords(const std::string& path) {
+void New::setReservedWords(const std::string& path)
+{
 	std::ifstream f;
 	f.open(path.c_str(), std::ofstream::in);
 	assert(f.good());
@@ -47,20 +48,24 @@ void New::setReservedWords(const std::string& path) {
 	}
 }
 
-void New::update() {
+void New::update()
+{
 	setEntities();
 	setMoreFrequent();
 }
 
-std::string New::getTitle() const {
+std::string New::getTitle() const
+{
 	return m_title;
 }
 
-std::string New::getBody() const {
+std::string New::getBody() const
+{
 	return m_body;
 }
 
-NamedEntity New::getMoreFrequent() const {
+NamedEntity New::getMoreFrequent() const
+{
 	return m_more_frequent;
 }
 
@@ -81,10 +86,12 @@ std::list<NamedEntity> New::getRelevantEntities() const
 
 	NamedEntity en;
 	aux = aux.substr(0, (aux.size() / 3));
-  std::list<NamedEntity>::const_iterator it;
-	for (it = m_entities.begin(); it != m_entities.end(); it++) {
+ std::list<NamedEntity>::const_iterator it;
+	for (it = m_entities.begin(); it != m_entities.end(); it++)
+	{
 		en = *it;
-		if (aux.find(en.getNamedEntity()) != std::string::npos) {
+		if (aux.find(en.getNamedEntity()) != std::string::npos)
+		{
 			relevant_entities.push_back(en);
 		}
 	}
@@ -239,8 +246,19 @@ bool New::isLetter(const char& c) const
 	if (ascii < 0) {
 		output = true;
 	}
-	if ((ascii >= 48) && (ascii <= 57)) {
+	if ((ascii >= 48) && (ascii <= 57))
+	{
 		output = true;
 	}
 	return output;
+}
+
+const bool New::operator==(const New& the_new) const
+{
+	return ((m_title == the_new.m_title) && (m_body == the_new.m_body));
+}
+
+const bool New::operator!=(const New& the_new) const
+{
+	return !(*this == the_new);
 }
