@@ -15,10 +15,11 @@ public:
        const std::string& user,
        const std::string& tuit_content,
        const std::string& path) : m_id(id), m_user(user),
-    New(tuit_content, tuit_content, path) {};
+    New(tuit_content, "", path) {};
   ~Tuit() {};
   const std::string getId() const { return m_id; }
   const std::string getUser() const { return m_user; }
+  virtual void setEntities();
  private:
   std::string m_id;
   std::string m_user;
