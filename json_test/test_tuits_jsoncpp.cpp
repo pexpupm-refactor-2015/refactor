@@ -34,7 +34,15 @@ plantean un alto el fuego provisional.\"\
   const Json::Value array = root["tuits"];
  
   for(unsigned int index = 0; index < array.size(); ++index) { 
+    std::cout<< "----------------------------------------------" <<std::endl;
     std::cout<<"Element " <<index <<" in array: " <<array[index] <<std::endl;
+    const Json::Value id = array[index]["id"];
+    const Json::Value tuit = array[index]["tuit"];
+    const Json::Value user = array[index]["usuario"];
+    std::cout<<" * Element [" << index <<"] id " << id << std::endl;
+    std::cout<<" * Element [" << index <<"] usuario " << user << std::endl;
+    std::cout<<" * Element [" << index <<"] tuit " << tuit << std::endl;
+    std::cout<< "----------------------------------------------" <<std::endl;
   }
 
   std::cout << "Json Example pretty print: " <<std::endl << 
