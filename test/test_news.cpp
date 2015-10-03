@@ -1,4 +1,5 @@
 #include "Analyzer.h"
+#include "JsonTuitParser.h"
 #include "gtest/gtest.h"
 
 // Test of parsing a first bunch of news, get path of news and titles
@@ -213,3 +214,24 @@ TEST(Analyzer, newsGroupByReferenceAllData) {
   EXPECT_EQ(analyzer.groupGeneralNews(), expected);
 }
 
+// Simple Test of Json Tuits parsing
+TEST(Analyzer, JsonTuitsParser) {
+  JsonTuitParser parser;
+  std::vector<Tuit> tuits;
+  parser.parseFile("../data_test_json/tuits.json", tuits);
+  EXPECT_EQ(tuits.size(), 3);
+  EXPECT_EQ(tuits[0].getId(), "0");
+  EXPECT_EQ(tuits[0].getUser(), "@pepe_perez");
+  EXPECT_EQ(tuits[0].getBody(), "Liberan a los dos sospechosos detenidos \
+por el asesinato de un niño de 11 años en Liverpool");
+
+  EXPECT_EQ(tuits[1].getId(), "1");
+  EXPECT_EQ(tuits[1].getUser(), "@juan_toqui");
+  EXPECT_EQ(tuits[1].getBody(), "Detienen a seis jóvenes más en relación con \
+el asesinato de el niño de Liverpool");
+
+  EXPECT_EQ(tuits[2].getId(), "2");
+  EXPECT_EQ(tuits[2].getUser(), "@pupulupu");
+  EXPECT_EQ(tuits[2].getBody(), "Siguen los interrogatorios a los detenidos \
+por el asesinato de el niño de Liverpool");
+}

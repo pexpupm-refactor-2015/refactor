@@ -44,4 +44,4 @@ public:
   NamedEntity m_more_frequent;
 };
 
-#endif /* NOTICIA_H_ */
+#endif /* _NEW_H_ */
