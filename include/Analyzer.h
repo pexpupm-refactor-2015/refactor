@@ -12,12 +12,14 @@ class Analyzer
 {
 public:
   Analyzer();
-  Analyzer(std::string ruta);
-  void setNews(const std::string& ruta);
-  void setTuits(const std::string& ruta);
+  Analyzer(std::string path);
+  void setNews(const std::string& path);
+  void setTuits(const std::string& path);
   std::string groupNews();
   std::string groupGeneralNews();
-  std::string toString()const;
+  std::string toString() const;
+  std::string toWideString() const;
+
  private:
   bool mustContinueParsing(const std::ifstream& file,
                            int& group_desc,
@@ -28,7 +30,7 @@ public:
   void sortNews();
   void parseNews(std::ifstream& f,
                  const std::string& news_path);
-  const std::string getFinalPath(const std::string& ruta_noticias,
+  const std::string getFinalPath(const std::string& path_news,
                                  const int& xshift,
                                  const int& yshift) const;
   bool exists(std::list<NamedEntity> es, NamedEntity e) const;

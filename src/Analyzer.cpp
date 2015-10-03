@@ -11,6 +11,7 @@
 #include "New.h"
 #include "Tuit.h"
 #include "JsonTuitParser.h"
+#include "NewsStringizer.h"
 
 const std::string NEWS_FILE_PREFIX = "/newC";
 const std::string NEWS_FILE_SUFFIX = ".ES.txt";
@@ -297,15 +298,17 @@ bool Analyzer::exists(std::list<NamedEntity> es, NamedEntity e) const
 
 std::string Analyzer::toString() const
 {
-  std::string output = "";
-  New aux;
-  std::list<New>::const_iterator it;
-  for (it = m_news_list.begin(); it != m_news_list.end(); it++) {
-    aux = *it;
-    if (output == "") {
-      output = output + "Ruta del directorio: " + m_path + "\n\n";
-    }
-    output = output + "Titulo: " + aux.getTitle() + "\n\n";
-  }
+  std::string output;
+  output = "Ruta del directorio: " + m_path + "\n\n";
+  output += NewsStringizer::titlesToString(m_news_list);
   return output;
 }
+
+std::string Analyzer::toWideString() const
+{
+  std::string output;
+  output = "Ruta del directorio: " + m_path + "\n\n";
+  output += NewsStringizer::titlesAndBodiesToString(m_news_list);
+  return output;
+}
+
