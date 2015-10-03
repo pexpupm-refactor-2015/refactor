@@ -14,6 +14,7 @@ public:
   Analyzer();
   Analyzer(std::string ruta);
   void setNews(const std::string& ruta);
+  void setTuits(const std::string& ruta);
   std::string groupNews();
   std::string groupGeneralNews();
   std::string toString()const;

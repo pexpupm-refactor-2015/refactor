@@ -9,11 +9,14 @@
 #include <string.h>
 #include "Analyzer.h"
 #include "New.h"
+#include "Tuit.h"
+#include "JsonTuitParser.h"
 
 const std::string NEWS_FILE_PREFIX = "/newC";
 const std::string NEWS_FILE_SUFFIX = ".ES.txt";
 const std::string NEWS_PATH = "/news";
 const std::string RESTRICTED_WORDS = "/ES_stopList.txt";
+const std::string JSON_TUITS_FILE = "tuits.json";
 
 Analyzer::Analyzer() :
   m_news_list(), m_path()
@@ -25,6 +28,7 @@ Analyzer::Analyzer(std::string path) :
   m_path(path)
 {
   setNews(path);
+  setTuits(path);
 }
 
 const std::string Analyzer::getFinalPath(const std::string& news_path,
@@ -97,11 +101,24 @@ void Analyzer::setNews(const std::string& path)
     news_file.open(final_path.c_str(), std::ofstream::in);
     parseNews(news_file, restriction_path);
     new_desc++;
-  continue_parsing = mustContinueParsing(news_file, group_desc, new_desc,
-                                         more_files);
-  news_file.close();
+    continue_parsing = mustContinueParsing(news_file, group_desc, new_desc,
+                                           more_files);
+    news_file.close();
   }
   while (continue_parsing);
+}
+
+void Analyzer::setTuits(const std::string& path)
+{
+  std::string json_file = path + "/" + JSON_TUITS_FILE;
+  std::vector<Tuit> tuit_list;
+  JsonTuitParser parser;
+  if(parser.parseFile(json_file, tuit_list)) {
+    std::vector<Tuit>::const_iterator tuit_it = tuit_list.begin();
+    for (tuit_it = tuit_list.begin(); tuit_it != tuit_list.end(); tuit_it++) {
+      m_news_list.push_back(*tuit_it);
+    }
+  }
 }
 
 std::string Analyzer::groupNews()
