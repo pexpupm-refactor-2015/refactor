@@ -46,8 +46,8 @@ bool JsonTuitParser::parseString(const std::string& tuits_json_string,
   for(unsigned int index = 0; index < array.size(); ++index) {
     const Json::Value id = array[index][ID_TAG];
     const Json::Value user = array[index][USER_TAG];
-    const Json::Value body = array[index][TUIT_TAG];
-    Tuit tuit(id.asString(), user.asString(), body.asString(), tuit_file_path);
+    const Json::Value title = array[index][TUIT_TAG];
+    Tuit tuit(id.asString(), user.asString(), title.asString(), tuit_file_path);
     tuit_list.push_back(tuit);
   }
 

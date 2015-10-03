@@ -222,18 +222,25 @@ TEST(Analyzer, JsonTuitsParser) {
   EXPECT_EQ(tuits.size(), 3);
   EXPECT_EQ(tuits[0].getId(), "0");
   EXPECT_EQ(tuits[0].getUser(), "@pepe_perez");
+  EXPECT_EQ(tuits[0].getTitle(), "Liberan a los dos sospechosos detenidos \
+por el asesinato de un niño de 11 años en Liverpool");
   EXPECT_EQ(tuits[0].getBody(), "Liberan a los dos sospechosos detenidos \
 por el asesinato de un niño de 11 años en Liverpool");
 
   EXPECT_EQ(tuits[1].getId(), "1");
   EXPECT_EQ(tuits[1].getUser(), "@juan_toqui");
+  EXPECT_EQ(tuits[1].getTitle(), "Detienen a seis jóvenes más en relación con \
+el asesinato de el niño de Liverpool");
   EXPECT_EQ(tuits[1].getBody(), "Detienen a seis jóvenes más en relación con \
 el asesinato de el niño de Liverpool");
 
   EXPECT_EQ(tuits[2].getId(), "2");
   EXPECT_EQ(tuits[2].getUser(), "@pupulupu");
+  EXPECT_EQ(tuits[2].getTitle(), "Siguen los interrogatorios a los detenidos \
+por el asesinato de el niño de Liverpool");
   EXPECT_EQ(tuits[2].getBody(), "Siguen los interrogatorios a los detenidos \
 por el asesinato de el niño de Liverpool");
+
 }
 
 TEST(Analyzer, toStringJson) {
@@ -247,9 +254,12 @@ TEST(Analyzer, toStringJson) {
 		  "Titulo:  Siguen los interrogatorios a los detenidos por el asesinato de el ni\xF1o de Liverpool \n\n"
 		  "Titulo:  Detienen a seis j\xF3venes m\xE1s en relaci\xF3n con el asesinato de el ni\xF1o de Liverpool \n\n"
 		  "Titulo:  Liberan a los dos sospechosos detenidos por el asesinato de un ni\xF1o de 11 a\xF1os en Liverpool \n\n"
-		  "Titulo: \n\n"
-		  "Titulo: \n\n"
-		  "Titulo: \n\n");
+		  "Titulo: Liberan a los dos sospechosos detenidos \
+por el asesinato de un niño de 11 años en Liverpool\n\n"
+		  "Titulo: Detienen a seis jóvenes más en relación con \
+el asesinato de el niño de Liverpool\n\n"
+		  "Titulo: Siguen los interrogatorios a los detenidos \
+por el asesinato de el niño de Liverpool\n\n");
   EXPECT_EQ(analyzer.toString(), expected);
 }
 
@@ -272,11 +282,11 @@ TEST(Analyzer, toWideStringJson) {
                        "Cuerpo:  La polic\xED" "a ha dado a conocer el posible perfil de el asesino que podr\xED" "a ser un menor de 13 a 15 a\xF1os , de piel blanca y de aproximadamente 1,70 de estatura . \xBB  La polic\xED" "a brit\xE1nica ha anunciado la detenci\xF3n de otros seis j\xF3venes , de 15 a 19 a\xF1os , entre ellos dos chicas , en relaci\xF3n con el asesinato de Rhys Jones , el ni\xF1o de 11 a\xF1os de Liverpool ( norte de Inglaterra ) .  Tres chicos de 15 , 16 , y 19 a\xF1os , m\xE1s dos chicas 15 y 18 fueron detenidos en Liverpool el s\xE1" "bado por la ma\xF1" "ana , seg\xFAn inform\xF3 un portavoz de la Polic\xED" "a de Merseyside dijo . Otro chico m\xE1s , de 19 a\xF1os fue , por la tarde .  El superintendente de la Polic\xED" "a , David Kelly , explic\xF3 que uno de los muchachos result\xF3 herido durante la detenci\xF3n , ya que se cay\xF3 de una ventana por la que intentaba escapar . La heridas que sufr\xED" "a no hicieron temer en ning\xFAn momento por su vida .  Rhys Jones muri\xF3 el mi\xE9rcoles por la noche cuando jugaba a el f\xFAtbol con unos amigos a el recibir el impacto de una bala en el cuello disparada por un adolescente encapuchado que iba montado en una bicicleta .  El suceso ha conmocionado a el Reino Unido por su brutalidad , y tanto la madre de el ni\xF1o , que tuvo a \xE9ste entre sus brazos mientras se desangraba sin poder hacer nada por salvar le , como la polic\xED" "a han hecho un llamamiento a los ciudadanos para que ayuden a atrapar a el asesino .  Seg\xFAn el perfil divulgado por la polic\xED" "a , \xE9se podr\xED" "a ser un menor de trece a quince a\xF1os , de piel blanca , de aproximadamente 1,70 de estatura y que en el momento de cometer el crimen llevaba ropa negra y calzado deportivo blanco .  Dos j\xF3venes , de 14 y 18 a\xF1os , detenidos anteriormente por la polic\xED" "a , fueron puestos en libertad , el jueves por la noche tras ser sometidos a interrogatorio .  Los inspectores que investigan lo ocurrido han pedido a los testigos de el crimen que se presenten y les han asegurado que se proteger\xE1 su identidad cuando testifiquen .  Los jugadores de el equipo de el peque\xF1o asesinado , el Everton , de la primera divisi\xF3n inglesa , saldr\xE1n a el campo con brazaletes negros en el partido que juegan en casa contra el Blackburn Rovers .  Un centenar de agentes trabajan directamente en el caso , apoyados por otros colegas de la unidad de cr\xEDmenes con armas de fuego de el condado de Merseyside , a el que pertenece Liverpool .  La polic\xED" "a est\xE1 examinando el material filmado por las c\xE1maras de v\xED" "deo instaladas en las proximidades de el lugar donde ocurri\xF3 el crimen . \r \n\n"
                        "Titulo:  Liberan a los dos sospechosos detenidos por el asesinato de un ni\xF1o de 11 a\xF1os en Liverpool \n\n"
                        "Cuerpo:  Rhys Jones muri\xF3 tras recibir el impacto de una bala en el cuello mientras jugaba un partido de f\xFAtbol con varios amigos en el aparcamiento de un pub . \xBB  Los dos adolescentes detenidos bajo sospecha de haber matado de un disparo a Rhys Jones , un ni\xF1o de 11 a\xF1os en Liverpool ( norte de Inglaterra ) han sido puestos en libertad , seg\xFAn ha confirmado la Polic\xED" "a , que sigue buscando a el asesino .  Los j\xF3venes , de 14 y 18 a\xF1os , fueron arrestados este jueves y liberados ese mismo d\xED" "a por la noche , tras ser interrogados sobre la muerte de el peque\xF1o Rhys Jones .  Rhys muri\xF3 el mi\xE9rcoles por la noche a el recibir el impacto de una bala en el cuello mientras disputaba un partido de f\xFAtbol con varios amigos en el aparcamiento de un pub en el barrio de Croxteth .  Seg\xFAn la Polic\xED" "a de el norte\xF1o condado de Merseyside , el ni\xF1o - de quien se han difundido fotos en las que viste la camiseta de el Everton , su club de f\xFAtbol preferido - fue tiroteado por un adolescente encapuchado que paseaba por la zona en una bicicleta .  Las fuerzas de el orden , que han movilizado a unos 100 agentes para investigar el caso , seg\xFAn ha divulgado una descripci\xF3n de el posible autor de el crimen , que ha conmocionado por su brutalidad a el Reino Unido .  Seg\xFAn ese perfil , el presunto asesino podr\xED" "a ser un menor de entre 13 y 15 a\xF1os de edad , blanco de piel , de aproximadamente 1,70 metros y ataviado con ropa negra y calzado deportivo blanco .  La madre de el ni\xF1o , Melanie Jones , cuyo hijo muri\xF3 en sus brazos mientras el personal de el servicio de ambulancias trataba de reanimarle , ha hecho un emocionado llamamiento a los ciudadanos para que ayuden a atrapar a el autor de el crimen .  \" Nuestro hijo s\xF3lo ten\xED" "a 11 a\xF1os , s\xF3lo era un ni\xF1o . Esto no deber\xED" "a haber sucedido . Esto no deber\xED" "a estar ocurriendo . Por favor , ay\xFA" "dennos \" , ha declarado la madre sin poder contener las l\xE1grimas . \" Sabemos que la gente debe estar asustada , pero no podemos dejar a el asesino suelto \" , ha agregado la madre .  La Polic\xED" "a de el condado de Merseyside reparti\xF3 folletos con un n\xFAmero especial de tel\xE9" "fono para que los j\xF3venes de el barrio de Croxteth env\xED" "en mensajes de texto an\xF3nimo con pistas que puedan conducir a el responsable de el asesinato .  \" La gente joven se manda mensajes de texto con frecuencia y queremos informaci\xF3n sobre el asesino \" , ha declarado el subcomisario de polic\xED" "a Simon Byrne a la cadena p\xFA" "blica brit\xE1nica BBC .  Por su parte , el Everton ( uno de los dos clubes de la ciudad que militan en la ' Premier League ' inglesa , junto a el Liverpool ) , de el que era hincha el peque\xF1o Rhys , le homenajear\xE1 el pr\xF3ximo s\xE1" "bado con un minuto de silencio antes de su partido ante el Blackburns Rovers .  Este jueves , el primer ministro brit\xE1nico , Gordon Brown , ha condenado el \" crimen atroz que ha conmocionado a todo el pa\xEDs \" , ha subrayado que \" los responsables ser\xE1n encontrados , detenidos y castigados \" y ha enviado su pesa me a la familia de el menor .  El triste suceso coincide con un debate sobre el aumento de la violencia juvenil en las calles de el Reino Unido , que comienza a atemorizar a los adultos mientras los pol\xEDticos y la Polic\xED" "a abogan por tomar medidas urgentes antes de que se escape a todo control .  Desde comienzos de el 2007 , ocho menores han muerto a consecuencia de disparos de armas ligeras , seis de ellos en Londres , uno en Manchester ( norte de Inglaterra ) y el \xFAltimo , el peque\xF1o Rhys Jones , en Liverpool . \r \n\n"
-                       "Titulo: \n\n"
+                       "Titulo: Liberan a los dos sospechosos detenidos por el asesinato de un ni\xF1o de 11 a\xF1os en Liverpool\n\n"
                        "Cuerpo: Liberan a los dos sospechosos detenidos por el asesinato de un ni\xF1o de 11 a\xF1os en Liverpool\n\n"
-                       "Titulo: \n\n"
+                       "Titulo: Detienen a seis j\xF3venes m\xE1s en relaci\xF3n con el asesinato de el ni\xF1o de Liverpool\n\n"
                        "Cuerpo: Detienen a seis j\xF3venes m\xE1s en relaci\xF3n con el asesinato de el ni\xF1o de Liverpool\n\n"
-                       "Titulo: \n\n"
+                       "Titulo: Siguen los interrogatorios a los detenidos por el asesinato de el ni\xF1o de Liverpool\n\n"
                        "Cuerpo: Siguen los interrogatorios a los detenidos por el asesinato de el ni\xF1o de Liverpool\n\n");
   EXPECT_EQ(analyzer.toWideString(), expected);
 }
