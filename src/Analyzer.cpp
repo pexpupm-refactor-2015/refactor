@@ -14,8 +14,6 @@
 #include "JsonTuitParser.h"
 #include "NewsStringizer.h"
 
-const std::string JSON_TUITS_FILE = "tuits.json";
-
 Analyzer::Analyzer() :
   m_news_list(), m_path()
 {
@@ -36,10 +34,9 @@ void Analyzer::setNews(const std::string& path)
 
 void Analyzer::setTuits(const std::string& path)
 {
-  std::string json_file = path + "/" + JSON_TUITS_FILE;
   std::vector<Tuit> tuit_list;
   JsonTuitParser parser;
-  if(parser.parseFile(json_file, tuit_list)) {
+  if(parser.parseFile(path, tuit_list)) {
     std::vector<Tuit>::const_iterator tuit_it = tuit_list.begin();
     for (tuit_it = tuit_list.begin(); tuit_it != tuit_list.end(); tuit_it++) {
       m_news_list.push_back(*tuit_it);
