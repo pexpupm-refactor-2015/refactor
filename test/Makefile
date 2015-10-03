@@ -1,7 +1,7 @@
 SRC_DIR=../src
 INC_FILES=../include
 SOURCES=$(shell ls $(SRC_DIR)/*.cpp)
-TEST_FILE=test_noticias.cpp
+TEST_FILE=test_news.cpp
 GTEST_FILE=gtest
 GTEST_LIBS=gtest gtest_main pthread
 GTEST_LINK_LIBS=$(addprefix -l,$(GTEST_LIBS))
