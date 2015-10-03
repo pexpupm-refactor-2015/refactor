@@ -1,4 +1,4 @@
-[
+{ "tuits" : [
   {
     "id": 0,
     "usuario" : "@pepe_perez",
@@ -15,3 +15,4 @@
     "tuit": "Siguen los interrogatorios a los detenidos por el asesinato de el niño de Liverpool"
   }
 ]
+}
