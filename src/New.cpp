@@ -173,7 +173,7 @@ void New::setEntities()
     }
     else {
       addEntity(aux);
-        aux = "";
+      aux = "";
     }
   }
 }

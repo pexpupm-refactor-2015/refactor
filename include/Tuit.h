@@ -14,8 +14,7 @@ public:
   Tuit(const std::string& id,
        const std::string& user,
        const std::string& tuit_content,
-       const std::string& path) : m_id(id), m_user(user),
-    New(tuit_content, "", path) {};
+       const std::string& path);
   ~Tuit() {};
   const std::string getId() const { return m_id; }
   const std::string getUser() const { return m_user; }
