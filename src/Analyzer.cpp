@@ -35,8 +35,7 @@ void Analyzer::setNews(const std::string& path)
 void Analyzer::setTuits(const std::string& path)
 {
   std::vector<Tuit> tuit_list;
-  JsonTuitParser parser;
-  if(parser.parseFile(path, tuit_list)) {
+  if(JsonTuitParser::parseFromPath(path, tuit_list)) {
     std::vector<Tuit>::const_iterator tuit_it = tuit_list.begin();
     for (tuit_it = tuit_list.begin(); tuit_it != tuit_list.end(); tuit_it++) {
       m_news_list.push_back(*tuit_it);

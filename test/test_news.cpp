@@ -218,7 +218,7 @@ TEST(Analyzer, newsGroupByReferenceAllData) {
 TEST(Analyzer, JsonTuitsParser) {
   JsonTuitParser parser;
   std::vector<Tuit> tuits;
-  parser.parseFile("../data_test_json", tuits);
+  parser.parseFromPath("../data_test_json", tuits);
   EXPECT_EQ(tuits.size(), 3);
   EXPECT_EQ(tuits[0].getId(), "0");
   EXPECT_EQ(tuits[0].getUser(), "@pepe_perez");

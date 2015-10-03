@@ -12,15 +12,15 @@
 class JsonTuitParser
 {
 public:
-  JsonTuitParser();
-  ~JsonTuitParser();
-  bool parseFile(const char* tuit_file_path, std::vector<Tuit>& tuit_list);
-  bool parseFile(const std::string& tuit_file_path, std::vector<Tuit>& tuit_list);
-  bool parseString(const std::string& tuit_json_string, std::vector<Tuit>& tuit_list,
-                   const std::string& tuit_file_path);
- private:
-  Json::Value m_json_root;
-  Json::Reader m_json_reader;
+  static bool parseFile(const std::string& tuit_file_path,
+                        std::vector<Tuit>& tuit_list);
+  static bool parseFromPath(const char* tuit_file_path,
+                            std::vector<Tuit>& tuit_list);
+  static bool parseFromPath(const std::string& tuit_file_path,
+                            std::vector<Tuit>& tuit_list);
+  static bool parseString(const std::string& tuit_json_string,
+                          std::vector<Tuit>& tuit_list,
+                          const std::string& tuit_file_path);
 };
 
 #endif /* _TUIT_H_ */
