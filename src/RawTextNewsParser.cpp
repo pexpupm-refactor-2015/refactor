@@ -11,11 +11,15 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include "JsonTuitParser.h"
 
 const std::string NEWS_FILE_PREFIX = "/newC";
 const std::string NEWS_FILE_SUFFIX = ".ES.txt";
 const std::string NEWS_PATH = "/news";
 const std::string RESTRICTED_WORDS = "/ES_stopList.txt";
+
+static const std::string JSON_TITLE_TAG = "titulo";
+static const std::string JSON_BODY_TAG = "parrafos";
 
 bool RawTextNewsParser::parseAllFilesInPath(const std::string& all_news_path,
                                             std::list<New>& news_list)
@@ -29,9 +33,13 @@ bool RawTextNewsParser::parseAllFilesInPath(const std::string& all_news_path,
   for (auto file : newsFiles)
   {
   	std::string final_path = news_path + "/" + file;
-  	if (final_path.find(".txt"))
+  	if (final_path.find(".txt") != std::string::npos)
   	{
   		parseNewsFromTxtFile(final_path, restriction_path, news_list);
+  	}
+  	else if (final_path.find(".json") != std::string::npos)
+  	{
+  		parseNewsFromJsonFile(final_path, restriction_path, news_list);
   	}
   }
 
@@ -65,6 +73,39 @@ void RawTextNewsParser::parseNewsFromTxtFile(std::string &file,
     news_list.push_front(added_new);
   }
   news_file.close();
+}
+
+void RawTextNewsParser::parseNewsFromJsonFile(std::string &file,
+                        const std::string& restriction_path,
+                        std::list<New>& news_list)
+{
+  std::ifstream t(file.c_str());
+  std::stringstream buffer;
+  buffer << t.rdbuf();
+
+  Json::Value json_root;
+  Json::Reader json_reader;
+
+  if(!json_reader.parse(buffer.str(), json_root, false)) {
+    return;
+  }
+
+  std::string title;
+  std::string body;
+
+  const Json::Value jTitle = json_root[JSON_TITLE_TAG];
+  const Json::Value jBodyArray = json_root[JSON_BODY_TAG];
+
+  title = " " + jTitle.asString() + " ";
+  for (unsigned int index = 0; index < jBodyArray.size(); ++index)
+  {
+    body += jBodyArray[index].asString();
+  }
+
+  New added_new(title, body, restriction_path);
+  news_list.push_front(added_new);
+
+  t.close();
 }
 
 std::vector<std::string> RawTextNewsParser::getFilesFromDir(const std::string &path)

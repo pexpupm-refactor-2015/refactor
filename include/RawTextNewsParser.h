@@ -21,6 +21,10 @@ private:
                         const std::string& news_path,
                         std::list<New>& news_list);
 
+  static void parseNewsFromJsonFile(std::string &file,
+                          const std::string& news_path,
+                          std::list<New>& news_list);
+
   static std::vector<std::string> getFilesFromDir(const std::string &path);
 };
 
