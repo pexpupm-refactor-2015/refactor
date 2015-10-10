@@ -6,29 +6,22 @@
 
 #include <list>
 #include "New.h"
+#include <vector>
+#include <string>
 
 class RawTextNewsParser
 {
 public:
   static bool parseAllFilesInPath(const std::string& all_news_path,
                                   std::list<New>& news_list);
-  static bool parseFile(const char* raw_text_file_path,
-                        std::list<New>& news_list);
-  static bool parseFile(const std::string& news_file_path,
-                        std::list<New>& news_list);
+
 private:
-  static void parseNews(std::ifstream& f,
+
+  static void parseNewsFromTxtFile(std::string &file,
                         const std::string& news_path,
                         std::list<New>& news_list);
-  static bool mustContinueParsing(const std::ifstream& file,
-                                  int& group_desc,
-                                  int& new_desc,
-                                  bool& more_files);
-  static bool continueParsing();
-  static std::string getFinalPath(const std::string& path_news,
-                                  const int& xshift,
-                                  const int& yshift);
-  static std::string zeroPadding(const int& nunber, const int& size);
+
+  static std::vector<std::string> getFilesFromDir(const std::string &path);
 };
 
 #endif /* _RAW_TEXT_NEWS_PARSER_H_ */

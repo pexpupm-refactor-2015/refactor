@@ -9,7 +9,7 @@ GTEST_FILE=gtest
 GTEST_LIBS=gtest gtest_main pthread
 GTEST_LINK_LIBS=$(addprefix -l,$(GTEST_LIBS))
 CC=g++
-CC_FLAGS=-ggdb
+CC_FLAGS=-ggdb -std=c++0x
 
 all: gtest
 
