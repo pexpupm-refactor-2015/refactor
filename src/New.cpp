@@ -257,3 +257,11 @@ const bool New::operator!=(const New& the_new) const
 {
   return !(*this == the_new);
 }
+
+Json::Value New::toJsonNode() const
+{
+	Json::Value jNew;
+	jNew["titulo"] = this->m_title;
+	jNew["parrafos"] = this->m_body;
+	return jNew;
+}

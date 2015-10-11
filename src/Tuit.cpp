@@ -34,3 +34,12 @@ void Tuit::setEntities()
     addEntity(aux);
   }
 }
+
+Json::Value Tuit::toJsonNode() const
+{
+	Json::Value jNew;
+	jNew["tuit"] = this->m_title;
+	jNew["usuario"] = this->m_user;
+	jNew["id"] = this->m_id;
+	return jNew;
+}

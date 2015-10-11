@@ -19,6 +19,7 @@ public:
   std::string groupGeneralNews();
   std::string toString() const;
   std::string toWideString() const;
+  std::string toJsonString() const;
 
  private:
   void sortNews();
@@ -26,6 +27,9 @@ public:
   std::string groupToString(const std::list<NamedEntity> group[],
                             const std::list<New>& processed_news_list,
                             const std::list<New>& original_news_list) const;
+  std::string groupToStringJson(const std::list<NamedEntity> group[],
+                              const std::list<New>& processed_news_list,
+                              const std::list<New>& original_news_list) const;
   void cleanDuplicatedEntities(std::list<NamedEntity>& list) const;
   bool groupPerNew(const New& the_new, std::list<NamedEntity>& group,
                    std::list<New>& processed_news_list) const;

@@ -19,6 +19,7 @@ public:
   const std::string getId() const { return m_id; }
   const std::string getUser() const { return m_user; }
   virtual void setEntities();
+  virtual Json::Value toJsonNode() const;
  private:
   std::string m_id;
   std::string m_user;

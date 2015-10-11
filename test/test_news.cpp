@@ -15,6 +15,7 @@ TEST(Analyzer, toString) {
 		  "Titulo:  Detienen a seis j\xF3venes m\xE1s en relaci\xF3n con el asesinato de el ni\xF1o de Liverpool \n\n"
 		  "Titulo:  Liberan a los dos sospechosos detenidos por el asesinato de un ni\xF1o de 11 a\xF1os en Liverpool \n\n");
   EXPECT_EQ(analyzer.toString(), expected);
+  analyzer.toJsonString();
 }
 
 // Test of a first bunch of news, group by entity
@@ -342,5 +343,22 @@ TEST(Analyzer, newsGroupByEntityWithJsonNews) {
 		  "*[ Siguen los interrogatorios a los detenidos por el asesinato de el ni\xF1o de Liverpool ]\n"
 		  "*[ Liberan a los dos sospechosos detenidos por el asesinato de un ni\xF1o de 11 a\xF1os en Liverpool ]\n");
   EXPECT_EQ(analyzer.groupNews(), expected);
+}
+
+// Test of a first bunch of news, group by references including Tuits
+TEST(Analyzer, newsGroupByReferencesIncludingTuits) {
+  Analyzer analyzer("../data_test_json");
+
+  std::string expected("[ Detenidos en Reino Unido dos adolescentes sospechosos de matar de un disparo a un menor ]\n"
+   "   *[ Liberan a los dos sospechosos de el asesinato de un ni\xF1o en Liverpool ]\n"
+   "   *[ Detienen a seis j\xF3venes m\xE1s en relaci\xF3n con el asesinato de el ni\xF1o de Liverpool ]\n"
+   "   *[ Noticias de Liverpool: Liberan a los dos sospechosos detenidos por el asesinato de un ni\xF1o de 11 a\xF1os en Liverpool ]\n"
+   "   *[ Noticias de Liverpool: Detienen a seis j\xF3venes m\xE1s en relaci\xF3n con el asesinato de el ni\xF1o de Liverpool ]\n"
+   "   *[ Noticias de Liverpool: Siguen los interrogatorios a los detenidos por el asesinato de el ni\xF1o de Liverpool ]\n"
+   "   *[ Detenidos cinco menores en relaci\xF3n con el asesinato de el ni\xF1o de Liverpool ]\n"
+   "   *[ La polic\xED" "a pone en libertad a los sospechosos de el asesinato de el ni\xF1o de Liverpool ]\n"
+   "   *[ Siguen los interrogatorios a los detenidos por el asesinato de el ni\xF1o de Liverpool ]\n"
+   "   *[ Liberan a los dos sospechosos detenidos por el asesinato de un ni\xF1o de 11 a\xF1os en Liverpool ]\n\n");
+  EXPECT_EQ(analyzer.groupGeneralNews(), expected);
 }
 

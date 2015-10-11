@@ -7,6 +7,7 @@
 #include <string>
 #include <list>
 #include "NamedEntity.h"
+#include <json/writer.h>
 
 class New
 {
@@ -28,7 +29,8 @@ public:
   bool canBeGrouped(const New& analyzed_new) const;
   std::string toString() const;
   const bool operator==(const New& the_new) const; 
-  const bool operator!=(const New& the_new) const; 
+  const bool operator!=(const New& the_new) const;
+  virtual Json::Value toJsonNode() const;
 protected:
   virtual void setEntities();
   void setMoreFrequent();
