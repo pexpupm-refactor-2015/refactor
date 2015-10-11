@@ -3,6 +3,7 @@
  */
 #include "Tuit.h"
 #include <stdio.h>
+#include <iostream>
 
 Tuit::Tuit(const std::string& id,
            const std::string& user,

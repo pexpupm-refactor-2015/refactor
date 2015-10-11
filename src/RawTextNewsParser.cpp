@@ -22,7 +22,7 @@ static const std::string JSON_TITLE_TAG = "titulo";
 static const std::string JSON_BODY_TAG = "parrafos";
 
 bool RawTextNewsParser::parseAllFilesInPath(const std::string& all_news_path,
-                                            std::list<New>& news_list)
+                                            std::list<New*>& news_list)
 {
   bool something_parsed = false;
   std::string restriction_path = all_news_path + RESTRICTED_WORDS;
@@ -53,7 +53,7 @@ bool RawTextNewsParser::parseAllFilesInPath(const std::string& all_news_path,
 
 void RawTextNewsParser::parseNewsFromTxtFile(std::string &file,
                       const std::string& restriction_path,
-                      std::list<New>& news_list)
+                      std::list<New*>& news_list)
 {
 	std::ifstream news_file;
 	news_file.open(file.c_str(), std::ofstream::in);
@@ -69,7 +69,7 @@ void RawTextNewsParser::parseNewsFromTxtFile(std::string &file,
           body = body + " " + collector;
         }
     }
-    New added_new(title, body, restriction_path);
+    New *added_new = new New(title, body, restriction_path);
     news_list.push_front(added_new);
   }
   news_file.close();
@@ -77,7 +77,7 @@ void RawTextNewsParser::parseNewsFromTxtFile(std::string &file,
 
 void RawTextNewsParser::parseNewsFromJsonFile(std::string &file,
                         const std::string& restriction_path,
-                        std::list<New>& news_list)
+                        std::list<New*>& news_list)
 {
   std::ifstream t(file.c_str());
   std::stringstream buffer;
@@ -102,7 +102,7 @@ void RawTextNewsParser::parseNewsFromJsonFile(std::string &file,
     body += jBodyArray[index].asString();
   }
 
-  New added_new(title, body, restriction_path);
+  New *added_new = new New(title, body, restriction_path);
   news_list.push_front(added_new);
 
   t.close();

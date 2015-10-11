@@ -16,13 +16,13 @@
 #include<json/writer.h>
 
 Analyzer::Analyzer() :
-m_news_list(), m_path()
+m_news_list(0), m_path()
 {
 	;
 }
 
 Analyzer::Analyzer(std::string path) :
-  		m_path(path)
+  						m_path(path)
 {
 	setNews(path);
 	setTuits(path);
@@ -39,7 +39,9 @@ void Analyzer::setTuits(const std::string& path)
 	if(JsonTuitParser::parseFromPath(path, tuit_list)) {
 		std::vector<Tuit>::const_iterator tuit_it = tuit_list.begin();
 		for (tuit_it = tuit_list.begin(); tuit_it != tuit_list.end(); tuit_it++) {
-			m_news_list.push_back(*tuit_it);
+			Tuit *tuit = new Tuit(*tuit_it);
+			tuit->toJsonNode();
+			m_news_list.push_back(tuit);
 		}
 	}
 }
@@ -50,15 +52,15 @@ std::string Analyzer::groupNews()
 
 	std::string output = "";
 	std::string entity = "";
-	std::list<New>::iterator it;
+	std::list<New*>::iterator it;
 	for (it = m_news_list.begin(); it != m_news_list.end(); it++) {
-		New new1 = *it;
-		if (entity.compare(new1.getMoreFrequent().getNamedEntity()) == 0) {
-			output = output + "*[" + new1.getTitle() + "]\n";
+		New *new1 = *it;
+		if (entity.compare(new1->getMoreFrequent().getNamedEntity()) == 0) {
+			output = output + "*[" + new1->getTitle() + "]\n";
 		}
 		else {
-			entity = new1.getMoreFrequent().getNamedEntity();
-			output = output + "\n" + entity + "\n" + "*[" + new1.getTitle() + "]\n";
+			entity = new1->getMoreFrequent().getNamedEntity();
+			output = output + "\n" + entity + "\n" + "*[" + new1->getTitle() + "]\n";
 		}
 	}
 	return output;
@@ -66,12 +68,11 @@ std::string Analyzer::groupNews()
 
 std::string 
 Analyzer::groupToString(const std::list<NamedEntity> group[],
-		const std::list<New>& processed_news_list,
-		const std::list<New>& original_news_list) const
+		const std::list<New*>& processed_news_list,
+		const std::list<New*>& original_news_list) const
 {
 	std::string output;
 	std::string groups;
-	std::cout << "IPM: groupToString" << std::endl;
 
 	for (unsigned int c = 0; c < processed_news_list.size(); c++) {
 		for (std::list<NamedEntity>::const_iterator it4 = group[c].begin();
@@ -79,20 +80,19 @@ Analyzer::groupToString(const std::list<NamedEntity> group[],
 		{
 			const NamedEntity& entity3 = *it4;
 
-			std::list<New>::const_iterator news_it;
+			std::list<New*>::const_iterator news_it;
 			for (news_it = original_news_list.begin();
 					news_it != original_news_list.end();
 					news_it ++) {
-				const New& n = *news_it;
+				const New& n = **news_it;
 				if (n.getMoreFrequent().equals(entity3)) {
 					if (groups == "") {
-						std::cout << "IPM: new group [" << n.getTitle() << "]" << std::endl;
 						groups = groups + "[" + n.getTitle()
-                  		+ "]\n";
+                  						+ "]\n";
 					}
 					else {
 						groups = groups + "   *[" + n.getTitle()
-                  		+ "]\n";
+                  						+ "]\n";
 					}
 				}
 			}
@@ -105,8 +105,8 @@ Analyzer::groupToString(const std::list<NamedEntity> group[],
 
 std::string
 Analyzer::groupToStringJson(const std::list<NamedEntity> group[],
-		const std::list<New>& processed_news_list,
-		const std::list<New>& original_news_list) const
+		const std::list<New*>& processed_news_list,
+		const std::list<New*>& original_news_list) const
 {
 	std::string output;
 	std::string groups;
@@ -123,77 +123,35 @@ Analyzer::groupToStringJson(const std::list<NamedEntity> group[],
 		{
 			const NamedEntity& entity3 = *it4;
 
-			std::list<New>::const_iterator news_it;
+			std::list<New*>::const_iterator news_it;
 			for (news_it = original_news_list.begin();
 					news_it != original_news_list.end();
 					news_it ++) {
-				const New& n = *news_it;
-				if (n.getMoreFrequent().equals(entity3)) {
+				const New *n = *news_it;
+				if (n->getMoreFrequent().equals(entity3)) {
 
-					jGroup["entidades"].append(n.getMoreFrequent().getNamedEntity());
+					jGroup["entidades"].append(n->getMoreFrequent().getNamedEntity());
 					if (jGroupEmpty)
 					{
-						jGroup["titulo"] = n.getTitle();
+						jGroup["titulo"] = n->getTitle();
 						jGroupEmpty = false;
-						std::cout << "IPM: new group [" << n.getTitle() << "]" << std::endl;
 					}
 					else
 					{
-						if (n.getBody().compare("") == 0)
-						{
-							std::cout << "IPM: new element Tuit [" << n.getTitle() << "]" << std::endl;
-							jGroup["elementos"].append((static_cast<const Tuit*>(&n))->toJsonNode());
-						}
-						else
-						{
-							std::cout << "IPM: new element Txt[" << n.getTitle() << "]" << std::endl;
-					   	jGroup["elementos"].append(n.toJsonNode());
-						}
+						jGroup["elementos"].append(n->toJsonNode());
 					}
 				}
 			}
 		}
 		jGroups.append(jGroup);
-		std::cout << "IPM: jGroups.append(jGroup)" << std::endl;
 		output = output + groups + "\n";
 		groups = "";
 	}
 
 	jRoot["grupos"] = jGroups;
-	std::cout << jRoot << std::endl;
+	output = jRoot.toStyledString();
 
-			//
-			//	Json::Value group;
-			//	group["titulo"] = "myTitulo";
-			//	group["entidades"] = "myEnt";
-			//
-			//  std::list<New>::const_iterator it;
-			//  for (it = m_news_list.begin(); it != m_news_list.end(); it++) {
-			////    output = output + "Titulo: " + (*it).getTitle() + "\n\n";
-			////    output = output + "Cuerpo: " + (*it).getBody() + "\n\n";
-			//  }
-			//  for (auto &myNew : m_news_list)
-			//  {
-			//  	Json::Value group;
-			//  	group["titulo"] = myNew.getTitle();
-			//
-			//  	std::list<NamedEntity> entitiesList = myNew.getEntities();
-			//  	Json::Value entities(Json::arrayValue);
-			//  	for (auto &entity : entitiesList)
-			//  	{
-			//  		entities.append(entity.getNamedEntity());
-			//  	}
-			//  	group["entidades"] = entities;
-			//
-			//  	Json::Value elements(Json::arrayValue);
-			//
-			//
-			//  	root["grupos"].append(group);
-			//  }
-			//
-			//  std::cout << root << std::endl;
-
-			return output;
+	return output;
 }
 
 void Analyzer::cleanDuplicatedEntities(std::list<NamedEntity>& list) const
@@ -213,14 +171,14 @@ void Analyzer::cleanDuplicatedEntities(std::list<NamedEntity>& list) const
 
 bool Analyzer::groupPerNew(const New& the_new,
 		std::list<NamedEntity>& group,
-		std::list<New>& processed_news_list) const
+		std::list<New*>& processed_news_list) const
 {
 	bool alone = true;
-	std::list<New>::iterator news_it2;
+	std::list<New*>::iterator news_it2;
 	for (news_it2 = processed_news_list.begin();
 			news_it2 != processed_news_list.end();
 			news_it2++) {
-		New& n2 = *news_it2;
+		New& n2 = **news_it2;
 
 		if ((the_new != n2)) {
 			if ((the_new.canBeGrouped(n2)) || (n2.canBeGrouped(the_new))) {
@@ -238,45 +196,48 @@ bool Analyzer::groupPerNew(const New& the_new,
 	return alone;
 }
 
-std::string Analyzer::groupGeneralNews()
+std::string Analyzer::groupGeneralNews(bool outJson)
 {
 	sortNews();
 	std::list<NamedEntity> group[m_news_list.size()];
-	std::list<New> processed_news_list = m_news_list;
-	std::list<New> original_news_list = m_news_list;
+	std::list<New*> processed_news_list = m_news_list;
+	std::list<New*> original_news_list = m_news_list;
 	unsigned int c = 0;
 
-	std::list<New>::iterator news_it;
+	std::list<New*>::iterator news_it;
 	for (news_it = processed_news_list.begin();
 			news_it != processed_news_list.end();
 			news_it++) {
-		if(groupPerNew(*news_it, group[c], processed_news_list)) {
+		if(groupPerNew(**news_it, group[c], processed_news_list)) {
 			news_it = processed_news_list.erase(news_it);
 		}
 		c++;
 	}
-	groupToString(group, processed_news_list, original_news_list);
-	groupToStringJson(group, processed_news_list, original_news_list);
+
+	if (outJson)
+	{
+		return groupToStringJson(group, processed_news_list, original_news_list);
+	}
 	return groupToString(group, processed_news_list, original_news_list);
 }
 
 void Analyzer::sortNews()
 {
-	New aux[m_news_list.size()];
+	New *aux[m_news_list.size()];
 	int c = 0;
-	for (std::list<New>::iterator it = m_news_list.begin();
+	for (std::list<New*>::iterator it = m_news_list.begin();
 			it != m_news_list.end(); it++) {
-		New n = *it;
+		New *n = *it;
 		aux[c] = n;
 		c++;
 	}
 
 	int news_list_size = m_news_list.size();
-	New temp;
+	New *temp;
 	for (int i = 1; i < news_list_size; i++) {
 		for (int j = 0; j < news_list_size - 1; j++) {
-			if (aux[j].getMoreFrequent().getNamedEntity()
-					> aux[j + 1].getMoreFrequent().getNamedEntity()) {
+			if (aux[j]->getMoreFrequent().getNamedEntity()
+					> aux[j + 1]->getMoreFrequent().getNamedEntity()) {
 				temp = aux[j];
 				aux[j] = aux[j + 1];
 				aux[j + 1] = temp;
@@ -287,7 +248,8 @@ void Analyzer::sortNews()
 	m_news_list.clear();
 
 	for (int i = 0; i < news_list_size; i++) {
-		m_news_list.push_back(aux[i]);
+		New *n = aux[i];
+		m_news_list.push_back(n);
 	}
 }
 
@@ -317,43 +279,5 @@ std::string Analyzer::toWideString() const
 	std::string output;
 	output = "Ruta del directorio: " + m_path + "\n\n";
 	output += NewsStringizer::titlesAndBodiesToString(m_news_list);
-	return output;
-}
-
-std::string Analyzer::toJsonString() const
-{
-	std::string output;
-
-	Json::Value root;
-	Json::Value group;
-	group["titulo"] = "myTitulo";
-	group["entidades"] = "myEnt";
-
-	std::list<New>::const_iterator it;
-	for (it = m_news_list.begin(); it != m_news_list.end(); it++) {
-		//    output = output + "Titulo: " + (*it).getTitle() + "\n\n";
-		//    output = output + "Cuerpo: " + (*it).getBody() + "\n\n";
-	}
-	for (auto &myNew : m_news_list)
-	{
-		Json::Value group;
-		group["titulo"] = myNew.getTitle();
-
-		std::list<NamedEntity> entitiesList = myNew.getEntities();
-		Json::Value entities(Json::arrayValue);
-		for (auto &entity : entitiesList)
-		{
-			entities.append(entity.getNamedEntity());
-		}
-		group["entidades"] = entities;
-
-		Json::Value elements(Json::arrayValue);
-
-
-		root["grupos"].append(group);
-	}
-
-	std::cout << root << std::endl;
-
 	return output;
 }

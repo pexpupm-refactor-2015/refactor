@@ -13,17 +13,17 @@ class RawTextNewsParser
 {
 public:
   static bool parseAllFilesInPath(const std::string& all_news_path,
-                                  std::list<New>& news_list);
+                                  std::list<New*>& news_list);
 
 private:
 
   static void parseNewsFromTxtFile(std::string &file,
                         const std::string& news_path,
-                        std::list<New>& news_list);
+                        std::list<New*>& news_list);
 
   static void parseNewsFromJsonFile(std::string &file,
                           const std::string& news_path,
-                          std::list<New>& news_list);
+                          std::list<New*>& news_list);
 
   static std::vector<std::string> getFilesFromDir(const std::string &path);
 };
